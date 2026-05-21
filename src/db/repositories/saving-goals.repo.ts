@@ -48,6 +48,12 @@ export const savingGoalsRepo = {
 
     const nextCurrentAmount = input.currentAmount ?? current.currentAmount;
     const nextTargetAmount = input.targetAmount ?? current.targetAmount;
+    const derivedStatus =
+      current.status === "archived"
+        ? "archived"
+        : nextCurrentAmount >= nextTargetAmount
+          ? "completed"
+          : "active";
     const goal: SavingGoal = {
       ...current,
       ...input,
@@ -59,9 +65,7 @@ export const savingGoalsRepo = {
           : input.note.trim() || undefined,
       currentAmount: nextCurrentAmount,
       targetAmount: nextTargetAmount,
-      status:
-        input.status ??
-        (nextCurrentAmount >= nextTargetAmount ? "completed" : current.status),
+      status: input.status ?? derivedStatus,
       updatedAt: nowIso(),
     };
 
