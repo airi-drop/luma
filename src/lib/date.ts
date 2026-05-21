@@ -18,6 +18,17 @@ export function getMonthFromDate(date: string) {
   return date.slice(0, 7);
 }
 
+export function getPreviousMonth(month: string) {
+  const [year, monthValue] = month.split("-").map(Number);
+
+  if (!year || !monthValue) {
+    return month;
+  }
+
+  const previous = new Date(year, monthValue - 2, 1);
+  return getCurrentMonth(previous);
+}
+
 export function nowIso() {
   return new Date().toISOString();
 }

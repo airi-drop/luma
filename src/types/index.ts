@@ -214,6 +214,18 @@ export interface AIUsage {
   updatedAt: string;
 }
 
+export interface AIInsightRecord {
+  id: string;
+  month: string;
+  headline: string;
+  reflection: string;
+  action: string;
+  types: string[];
+  aggregateSignature: string;
+  generatedAt: string;
+  updatedAt: string;
+}
+
 export interface BudgetUsageSummary {
   limit: number;
   used: number;

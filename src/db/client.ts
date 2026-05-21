@@ -1,5 +1,6 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import type {
+  AIInsightRecord,
   AIUsage,
   BackgroundAsset,
   BudgetRecord,
@@ -13,7 +14,7 @@ import type {
 } from "../types";
 
 const DB_NAME = "luma-db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export interface LumaDBSchema extends DBSchema {
   transactions: {
@@ -87,6 +88,14 @@ export interface LumaDBSchema extends DBSchema {
       "by-updated-at": string;
     };
   };
+  aiInsights: {
+    key: string;
+    value: AIInsightRecord;
+    indexes: {
+      "by-month": string;
+      "by-updated-at": string;
+    };
+  };
 }
 
 let dbPromise: Promise<IDBPDatabase<LumaDBSchema>> | null = null;
@@ -103,7 +112,8 @@ function createStoreIfMissing(
     | "backgrounds"
     | "characters"
     | "themes"
-    | "aiUsage",
+    | "aiUsage"
+    | "aiInsights",
 ) {
   return database.objectStoreNames.contains(storeName);
 }
@@ -186,6 +196,14 @@ export function getLumaDb() {
           const store = database.createObjectStore("aiUsage", {
             keyPath: "id",
           });
+          store.createIndex("by-updated-at", "updatedAt");
+        }
+
+        if (!createStoreIfMissing(database, "aiInsights")) {
+          const store = database.createObjectStore("aiInsights", {
+            keyPath: "id",
+          });
+          store.createIndex("by-month", "month");
           store.createIndex("by-updated-at", "updatedAt");
         }
       },

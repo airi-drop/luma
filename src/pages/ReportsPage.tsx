@@ -14,6 +14,7 @@ import {
   YAxis,
 } from "recharts";
 import { Link } from "react-router-dom";
+import { AIReflectionCard } from "../components/ai/AIReflectionCard";
 import { MonthlyRecapExport } from "../components/reports/MonthlyRecapExport";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
@@ -29,6 +30,7 @@ import { formatCurrency } from "../lib/currency";
 import { formatDateLabel } from "../lib/date";
 import { useBudgetsStore } from "../stores/budgets.store";
 import { useSavingGoalsStore } from "../stores/saving-goals.store";
+import { useSettingsStore } from "../stores/settings.store";
 import { useTransactionsStore } from "../stores/transactions.store";
 import { useUiStore } from "../stores/ui.store";
 
@@ -56,6 +58,7 @@ export function ReportsPage() {
   const monthlyBudget = useBudgetsStore((state) => state.monthlyBudget);
   const categoryBudgets = useBudgetsStore((state) => state.categoryBudgets);
   const savingGoals = useSavingGoalsStore((state) => state.goals);
+  const settings = useSettingsStore((state) => state.settings);
   const isLoadingTransactions = useTransactionsStore((state) => state.isLoading);
   const isLoadingBudgets = useBudgetsStore((state) => state.isLoading);
   const isLoadingGoals = useSavingGoalsStore((state) => state.isLoading);
@@ -274,6 +277,12 @@ export function ReportsPage() {
               </div>
             </div>
           </Card>
+
+          <AIReflectionCard
+            month={selectedMonth}
+            transactions={monthTransactions}
+            aiEnabled={settings?.aiEnabled ?? false}
+          />
 
           <ChartCard
             subtitle="Biar cepat kebaca kategori mana yang paling banyak kepakai."
