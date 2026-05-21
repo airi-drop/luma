@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-sans: "DM Sans", sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+
+  --bg-main: #1a1410;
+  --bg-card: #2a211b;
+  --bg-card-soft: #342a22;
+  --bg-elevated: #241c16;
+
+  --text-primary: #fff3dc;
+  --text-secondary: #cdbea8;
+  --text-muted: #9c8d7b;
+  --text-on-accent: #2b211a;
+
+  --accent-primary: #e8a857;
+  --accent-secondary: #8fb896;
+  --accent-soft: #f4d6a0;
+  --accent-surface: rgba(232, 168, 87, 0.16);
+
+  --border-soft: rgba(255, 243, 220, 0.1);
+  --overlay-start: rgba(26, 20, 16, 0.72);
+  --overlay-end: rgba(26, 20, 16, 0.94);
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-main);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-sans);
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+#root {
+  min-height: 100dvh;
+}
