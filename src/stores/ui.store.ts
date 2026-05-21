@@ -10,7 +10,7 @@ export type BottomSheetType =
 
 export interface ToastState {
   message: string;
-  tone?: "success" | "info" | "error";
+  tone?: "success" | "info" | "error" | "warning";
 }
 
 interface UiState {

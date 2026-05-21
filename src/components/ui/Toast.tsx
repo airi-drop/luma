@@ -7,6 +7,8 @@ const toneClasses = {
   info: "border-[var(--border-soft)] bg-[var(--bg-card)] text-[var(--text-primary)]",
   success:
     "border-[rgba(143,184,150,0.32)] bg-[rgba(143,184,150,0.18)] text-[var(--text-primary)]",
+  warning:
+    "border-[rgba(232,168,87,0.35)] bg-[rgba(232,168,87,0.18)] text-[var(--text-primary)]",
 } as const;
 
 export function Toast() {

@@ -80,6 +80,14 @@ export function SettingsPage() {
     await updateSettings({ backgroundBlur });
   }
 
+  async function handleAiToggle() {
+    if (!settings) {
+      return;
+    }
+
+    await updateSettings({ aiEnabled: !settings.aiEnabled });
+  }
+
   async function handleReset() {
     await resetCustomization();
   }
@@ -149,6 +157,32 @@ export function SettingsPage() {
           onOverlayChange={handleOverlayChange}
           onBlurChange={handleBlurChange}
         />
+      </Card>
+
+      <Card title="Bantuan AI">
+        <div className="flex items-center justify-between gap-4 rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">
+              Bantuan AI
+            </p>
+            <p className="text-sm leading-6 text-[var(--text-secondary)]">
+              Pakai AI buat parse teks jadi transaksi. Bisa dimatiin kapan aja.
+            </p>
+          </div>
+          <button
+            aria-pressed={settings.aiEnabled}
+            className={[
+              "inline-flex min-h-11 min-w-[92px] items-center justify-center rounded-full px-4 text-sm font-bold transition-colors",
+              settings.aiEnabled
+                ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                : "border border-[var(--border-soft)] bg-[var(--bg-card)] text-[var(--text-secondary)]",
+            ].join(" ")}
+            onClick={() => void handleAiToggle()}
+            type="button"
+          >
+            {settings.aiEnabled ? "Aktif" : "Off"}
+          </button>
+        </div>
       </Card>
 
       <Card title="Balik ke default">
