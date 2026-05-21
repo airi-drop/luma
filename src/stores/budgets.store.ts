@@ -18,6 +18,7 @@ interface BudgetsState {
   budgetUsage: ReturnType<typeof getBudgetUsage>;
   isLoading: boolean;
   error: string | null;
+  syncUsageWithTransactions: () => void;
   loadMonth: (month?: string) => Promise<void>;
   setMonth: (month: string) => Promise<void>;
   upsertMonthlyBudget: (totalBudget: number) => Promise<MonthlyBudget>;
@@ -55,6 +56,12 @@ export const useBudgetsStore = create<BudgetsState>((set, get) => ({
   budgetUsage: null,
   isLoading: false,
   error: null,
+  syncUsageWithTransactions() {
+    const { monthlyBudget, categoryBudgets, month } = get();
+    set({
+      ...deriveBudgetState(monthlyBudget, categoryBudgets, month),
+    });
+  },
   async loadMonth(month = get().month) {
     set({ isLoading: true, error: null });
 

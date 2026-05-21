@@ -5,6 +5,7 @@ import type { BudgetUsageSummary } from "../../types";
 
 interface HeroBudgetCardProps {
   budgetUsage: BudgetUsageSummary | null;
+  softWarning?: string | null;
 }
 
 function ProgressBar({ value }: { value: number }) {
@@ -20,7 +21,7 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
-export function HeroBudgetCard({ budgetUsage }: HeroBudgetCardProps) {
+export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps) {
   const percentage = budgetUsage?.percentage ?? 0;
   const progressLabel = `${Math.round(Math.min(percentage, 1) * 100)}%`;
   const status = getBudgetStatus(percentage);
@@ -95,6 +96,12 @@ export function HeroBudgetCard({ budgetUsage }: HeroBudgetCardProps) {
         >
           Lihat Budget
         </Link>
+
+        {softWarning ? (
+          <p className="rounded-[18px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.2)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+            {softWarning}
+          </p>
+        ) : null}
       </div>
     </section>
   );

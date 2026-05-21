@@ -10,7 +10,9 @@ function DataBootstrap() {
   const selectedMonth = useUiStore((state) => state.selectedMonth);
   const hydrateSettings = useSettingsStore((state) => state.hydrate);
   const loadTransactions = useTransactionsStore((state) => state.loadMonth);
+  const transactionItems = useTransactionsStore((state) => state.items);
   const loadBudgets = useBudgetsStore((state) => state.loadMonth);
+  const syncBudgetUsage = useBudgetsStore((state) => state.syncUsageWithTransactions);
   const loadGoals = useSavingGoalsStore((state) => state.loadGoals);
 
   useEffect(() => {
@@ -22,6 +24,10 @@ function DataBootstrap() {
     void loadTransactions(selectedMonth);
     void loadBudgets(selectedMonth);
   }, [selectedMonth, loadBudgets, loadTransactions]);
+
+  useEffect(() => {
+    syncBudgetUsage();
+  }, [syncBudgetUsage, transactionItems, selectedMonth]);
 
   return null;
 }

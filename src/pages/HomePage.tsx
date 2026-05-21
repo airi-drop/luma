@@ -5,6 +5,7 @@ import { RecentTransactionsCard } from "../components/cards/RecentTransactionsCa
 import { MascotPlaceholder } from "../components/character/MascotPlaceholder";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Card } from "../components/ui/Card";
+import { getHomeBudgetWarning } from "../features/budgets/warnings";
 import { getBudgetStatus, getTopCategory } from "../lib/finance";
 import { useBudgetsStore } from "../stores/budgets.store";
 import { useSettingsStore } from "../stores/settings.store";
@@ -19,9 +20,11 @@ export function HomePage() {
   const todayTotal = useTransactionsStore((state) => state.todayTotal);
   const openBottomSheet = useUiStore((state) => state.openBottomSheet);
   const budgetUsage = useBudgetsStore((state) => state.budgetUsage);
+  const categoryUsages = useBudgetsStore((state) => state.categoryUsages);
   const topCategory = getTopCategory(items);
   const recentTransactions = items.slice(0, 4);
   const mascotMood = getBudgetStatus(budgetUsage?.percentage ?? 0).tone;
+  const homeWarning = getHomeBudgetWarning(categoryUsages)?.message ?? null;
 
   return (
     <PageWrapper
@@ -37,7 +40,7 @@ export function HomePage() {
       }
     >
       <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
-        <HeroBudgetCard budgetUsage={budgetUsage} />
+        <HeroBudgetCard budgetUsage={budgetUsage} softWarning={homeWarning} />
         <MascotPlaceholder
           characterId={settings?.activeCharacterId ?? "otter"}
           mood={settings?.mascotEnabled === false ? "chill" : mascotMood}
