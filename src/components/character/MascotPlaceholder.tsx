@@ -1,3 +1,5 @@
+import { getCharacterById } from "../../features/customization/presets";
+
 type MascotMood = "happy" | "chill" | "worried" | "panic";
 
 const moodConfig: Record<
@@ -36,6 +38,8 @@ export function MascotPlaceholder({
   mood,
 }: MascotPlaceholderProps) {
   const config = moodConfig[mood];
+  const character = getCharacterById(characterId);
+  const initials = character.name.slice(0, 2).toUpperCase();
 
   return (
     <div className="relative isolate overflow-hidden rounded-[28px] border border-[rgba(255,243,220,0.14)] bg-[rgba(42,33,27,0.86)] p-4 shadow-[var(--shadow-card)]">
@@ -52,16 +56,19 @@ export function MascotPlaceholder({
             Mascot space
           </span>
           <span className="rounded-full bg-[rgba(26,20,16,0.44)] px-3 py-1 text-xs text-[var(--text-secondary)]">
-            {characterId}
+            {character.name}
           </span>
         </div>
         <div className="space-y-3">
           <div className="rounded-[24px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.52)] px-4 py-6 text-center">
-            <p className="font-display text-2xl leading-tight text-[var(--text-primary)]">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-[rgba(255,243,220,0.12)] bg-[linear-gradient(180deg,rgba(255,243,220,0.08),rgba(255,243,220,0.02))] font-display text-2xl font-bold text-[var(--text-primary)]">
+              {initials}
+            </div>
+            <p className="mt-3 font-display text-2xl leading-tight text-[var(--text-primary)]">
               {config.face}
             </p>
             <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-              Placeholder mascot untuk mode{" "}
+              {character.assetMap[mood]} dalam mode{" "}
               <span className="font-semibold text-[var(--text-primary)]">
                 {config.label}
               </span>
@@ -69,7 +76,7 @@ export function MascotPlaceholder({
             </p>
           </div>
           <p className="text-sm leading-6 text-[var(--text-secondary)]">
-            Nanti area ini bisa diganti asset karakter tanpa ganggu data budget.
+            Placeholder bawaan ini cukup buat pilih vibe karakter dulu, tanpa ganggu data budget.
           </p>
         </div>
       </div>

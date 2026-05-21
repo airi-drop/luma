@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { DEFAULT_CUSTOMIZATION } from "../features/customization/presets";
 import { backgroundsRepo } from "../db/repositories/backgrounds.repo";
 import { settingsRepo } from "../db/repositories/settings.repo";
 import type {
@@ -15,6 +16,7 @@ interface SettingsState {
   error: string | null;
   hydrate: () => Promise<void>;
   updateSettings: (input: UpdateUserSettingsInput) => Promise<UserSettings>;
+  resetCustomization: () => Promise<UserSettings>;
   createBackground: (
     input: CreateBackgroundAssetInput,
   ) => Promise<BackgroundAsset>;
@@ -52,6 +54,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set({ settings });
     return settings;
   },
+  async resetCustomization() {
+    const settings = await settingsRepo.update(DEFAULT_CUSTOMIZATION);
+    set({ settings });
+    return settings;
+  },
   async createBackground(input) {
     const background = await backgroundsRepo.create(input);
     set((state) => ({
@@ -60,17 +67,16 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     return background;
   },
   async removeBackground(id) {
+    const wasActive = get().settings?.backgroundId === id;
+
     await backgroundsRepo.remove(id);
+    const nextSettings = wasActive
+      ? await settingsRepo.update({ backgroundId: undefined })
+      : null;
+
     set((state) => ({
       backgrounds: state.backgrounds.filter((background) => background.id !== id),
-      settings:
-        state.settings?.backgroundId === id
-          ? { ...state.settings, backgroundId: undefined }
-          : state.settings,
+      settings: nextSettings ?? state.settings,
     }));
-
-    if (get().settings?.backgroundId === id) {
-      await settingsRepo.update({ backgroundId: undefined });
-    }
   },
 }));

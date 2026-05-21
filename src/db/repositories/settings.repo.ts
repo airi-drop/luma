@@ -1,4 +1,5 @@
 import { getLumaDb } from "../client";
+import { DEFAULT_CUSTOMIZATION } from "../../features/customization/presets";
 import { nowIso } from "../../lib/date";
 import type { UpdateUserSettingsInput, UserSettings } from "../../types";
 
@@ -7,11 +8,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   name: "",
   currency: "IDR",
   themeMode: "dark",
-  activeThemeId: "cozy-dark",
-  activeCharacterId: "otter",
-  backgroundId: undefined,
-  backgroundBlur: 0,
-  backgroundOverlayOpacity: 72,
+  ...DEFAULT_CUSTOMIZATION,
   mascotEnabled: true,
   aiEnabled: false,
   createdAt: nowIso(),

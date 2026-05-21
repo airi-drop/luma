@@ -10,8 +10,8 @@
   color-scheme: dark;
 
   --bg-main: #1a1410;
-  --bg-card: #2a211b;
-  --bg-card-soft: #342a22;
+  --bg-card: rgba(42, 33, 27, 0.82);
+  --bg-card-soft: rgba(52, 42, 34, 0.88);
   --bg-elevated: #241c16;
 
   --text-primary: #fff3dc;
@@ -28,8 +28,9 @@
   --success-soft: #8fb896;
 
   --border-soft: rgba(255, 243, 220, 0.1);
-  --overlay-start: rgba(26, 20, 16, 0.72);
-  --overlay-end: rgba(26, 20, 16, 0.94);
+  --overlay-base-rgb: 26, 20, 16;
+  --overlay-glow-primary: 232, 168, 87;
+  --overlay-glow-secondary: 143, 184, 150;
   --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.28);
 }
 
