@@ -23,6 +23,8 @@
   --accent-secondary: #8fb896;
   --accent-soft: #f4d6a0;
   --accent-surface: rgba(232, 168, 87, 0.16);
+  --danger-soft: #d96c5f;
+  --success-soft: #8fb896;
 
   --border-soft: rgba(255, 243, 220, 0.1);
   --overlay-start: rgba(26, 20, 16, 0.72);

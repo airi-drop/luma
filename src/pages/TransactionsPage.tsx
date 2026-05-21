@@ -1,15 +1,8 @@
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
+import { formatCurrency } from "../lib/currency";
 import { useTransactionsStore } from "../stores/transactions.store";
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
 export function TransactionsPage() {
   const items = useTransactionsStore((state) => state.items);
@@ -23,6 +16,7 @@ export function TransactionsPage() {
     >
       <Card title="Cari transaksi">
         <Input
+          disabled
           label="Cari detail"
           placeholder="Misal: kopi, bensin, album"
           hint="Search, filter, dan edit masuk sprint berikutnya."
@@ -33,8 +27,35 @@ export function TransactionsPage() {
         <p className="text-sm leading-6 text-[var(--text-secondary)]">
           {items.length > 0
             ? `${items.length} transaksi tersimpan. Hari ini ${formatCurrency(todayTotal)}, total bulan ini ${formatCurrency(monthlyTotal)}.`
-            : "Data layer transaksi sudah siap. List, filter, edit, dan delete masuk sprint berikutnya."}
+            : "Belum ada transaksi bulan ini. Catatan yang kamu simpan manual nanti muncul di sini."}
         </p>
+        {items.length > 0 ? (
+          <div className="mt-4 space-y-3">
+            {items.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="flex items-start justify-between gap-3 rounded-3xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4"
+              >
+                <div className="space-y-1">
+                  <p className="font-semibold text-[var(--text-primary)]">
+                    {transaction.detail}
+                  </p>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    {transaction.category} · {transaction.account}
+                  </p>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    {transaction.date}
+                    {transaction.mood ? ` · ${transaction.mood}` : ""}
+                    {transaction.note ? ` · ${transaction.note}` : ""}
+                  </p>
+                </div>
+                <p className="shrink-0 text-sm font-bold text-[var(--text-primary)]">
+                  {formatCurrency(transaction.nominal)}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </Card>
     </PageWrapper>
   );
