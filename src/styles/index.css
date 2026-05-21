@@ -15,8 +15,8 @@
   --bg-elevated: #241c16;
 
   --text-primary: #fff3dc;
-  --text-secondary: #cdbea8;
-  --text-muted: #9c8d7b;
+  --text-secondary: #d6c7b2;
+  --text-muted: #b3a28f;
   --text-on-accent: #2b211a;
 
   --accent-primary: #e8a857;
@@ -40,6 +40,7 @@
 
 html {
   background: var(--bg-main);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -56,10 +57,46 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, a, input, select, textarea, [role="button"]):focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba(232, 168, 87, 0.28);
+  color: var(--text-primary);
 }
 
 #root {
   min-height: 100dvh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import type { ParseResult } from "../../features/ai/types";
 import { useBudgetsStore } from "../../stores/budgets.store";
 import { useSettingsStore } from "../../stores/settings.store";
 import { useTransactionsStore } from "../../stores/transactions.store";
 import { useUiStore } from "../../stores/ui.store";
-import { AIParsePreviewSheet } from "../ai/AIParsePreviewSheet";
-import { AIQuickInput } from "../ai/AIQuickInput";
 import {
   ManualTransactionForm,
   type ManualTransactionFormInput,
 } from "../forms/ManualTransactionForm";
 import { BottomSheet } from "../ui/BottomSheet";
+
+const AIQuickInput = lazy(async () => {
+  const module = await import("../ai/AIQuickInput");
+  return { default: module.AIQuickInput };
+});
+
+const AIParsePreviewSheet = lazy(async () => {
+  const module = await import("../ai/AIParsePreviewSheet");
+  return { default: module.AIParsePreviewSheet };
+});
 
 export function AddTransactionSheet() {
   const activeBottomSheet = useUiStore((state) => state.activeBottomSheet);
@@ -78,8 +86,9 @@ export function AddTransactionSheet() {
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-1">
             <button
+              aria-pressed={activeTab === "manual"}
               className={[
-                "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
+                "min-h-12 rounded-full px-4 text-sm font-semibold transition-colors motion-reduce:transition-none",
                 activeTab === "manual"
                   ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)]",
@@ -90,8 +99,9 @@ export function AddTransactionSheet() {
               Manual
             </button>
             <button
+              aria-pressed={activeTab === "ai"}
               className={[
-                "min-h-11 rounded-full px-4 text-sm font-semibold transition-colors",
+                "min-h-12 rounded-full px-4 text-sm font-semibold transition-colors motion-reduce:transition-none",
                 activeTab === "ai"
                   ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)]",
@@ -109,22 +119,34 @@ export function AddTransactionSheet() {
               onSubmit={handleSubmit}
             />
           ) : (
-            <AIQuickInput
-              aiEnabled={settings?.aiEnabled ?? false}
-              onParsed={(result, originalText) =>
-                setPreviewState({ result, originalText })}
-            />
+            <Suspense fallback={<InlineLoader message="Fitur AI lagi dibuka..." />}>
+              <AIQuickInput
+                aiEnabled={settings?.aiEnabled ?? false}
+                onParsed={(result, originalText) =>
+                  setPreviewState({ result, originalText })}
+              />
+            </Suspense>
           )}
         </div>
       </BottomSheet>
 
-      <AIParsePreviewSheet
-        isOpen={previewState !== null}
-        onClose={() => setPreviewState(null)}
-        onSaved={handlePreviewSaved}
-        originalText={previewState?.originalText ?? ""}
-        result={previewState?.result ?? null}
-      />
+      <Suspense fallback={null}>
+        <AIParsePreviewSheet
+          isOpen={previewState !== null}
+          onClose={() => setPreviewState(null)}
+          onSaved={handlePreviewSaved}
+          originalText={previewState?.originalText ?? ""}
+          result={previewState?.result ?? null}
+        />
+      </Suspense>
     </>
+  );
+}
+
+function InlineLoader({ message }: { message: string }) {
+  return (
+    <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+      {message}
+    </div>
   );
 }

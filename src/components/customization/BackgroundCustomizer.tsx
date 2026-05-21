@@ -68,6 +68,7 @@ export function BackgroundCustomizer({
           type="file"
           accept="image/png,image/jpeg,image/webp"
           className="sr-only"
+          aria-label="Upload background baru"
           onChange={(event) => void handleFileChange(event)}
           disabled={isUploading}
         />
@@ -208,6 +209,8 @@ function BackgroundItem({
               src={previewUrl}
               alt={background.name}
               className="h-full w-full object-cover"
+              decoding="async"
+              loading="lazy"
             />
           ) : null}
         </div>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Luma">
+  <rect width="64" height="64" rx="18" fill="#1A1410" />
+  <circle cx="32" cy="28" r="14" fill="#E8A857" />
+  <path d="M18 43c4.8-4.9 11.1-7.4 18.9-7.4 4.7 0 8.9 1 12.8 2.9-2 6.6-8.2 11.5-15.7 11.5-6.2 0-11.6-3.1-15-7.9Z" fill="#8FB896" />
+  <circle cx="28" cy="26" r="2.4" fill="#2B211A" />
+  <circle cx="38" cy="26" r="2.4" fill="#2B211A" />
+  <path d="M27.5 33.5c2 1.8 7 1.8 9 0" fill="none" stroke="#2B211A" stroke-linecap="round" stroke-width="2.5" />
+</svg>

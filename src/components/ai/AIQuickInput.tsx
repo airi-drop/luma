@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { parseUserText } from "../../features/ai/transactionParser";
 import type { ParseResult } from "../../features/ai/types";
 import { AIError, type AIStatus } from "../../features/ai/types";
 import { useUiStore } from "../../stores/ui.store";
@@ -53,6 +52,7 @@ export function AIQuickInput({
 
     try {
       const originalText = text.trim();
+      const { parseUserText } = await import("../../features/ai/transactionParser");
       const result = await parseUserText(originalText);
       onParsed(result, originalText);
     } catch (error) {

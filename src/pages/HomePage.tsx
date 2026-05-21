@@ -4,6 +4,7 @@ import { QuickStatsRow } from "../components/cards/QuickStatsRow";
 import { RecentTransactionsCard } from "../components/cards/RecentTransactionsCard";
 import { MascotPlaceholder } from "../components/character/MascotPlaceholder";
 import { PageWrapper } from "../components/layout/PageWrapper";
+import { InstallPromptCard } from "../components/pwa/InstallPromptCard";
 import { Card } from "../components/ui/Card";
 import { getHomeBudgetWarning } from "../features/budgets/warnings";
 import { getBudgetStatus, getTopCategory } from "../lib/finance";
@@ -53,6 +54,8 @@ export function HomePage() {
         topCategory={topCategory}
       />
 
+      <InstallPromptCard />
+
       <Card
         title="Ringkasan cepat"
         subtitle={`Bulan ${month} dipantau dari transaksi manual yang kamu simpan di device ini.`}
@@ -76,7 +79,7 @@ export function HomePage() {
 
       <button
         aria-label="Tambah transaksi"
-        className="fixed bottom-[calc(env(safe-area-inset-bottom)+88px)] left-1/2 z-30 inline-flex w-[calc(100%-40px)] max-w-[220px] -translate-x-1/2 items-center justify-center gap-2 rounded-full bg-[var(--accent-primary)] px-5 py-4 text-sm font-bold text-[var(--text-on-accent)] shadow-[0_18px_36px_rgba(232,168,87,0.28)]"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom)+88px)] left-1/2 z-30 inline-flex min-h-[56px] w-[calc(100%-40px)] max-w-[220px] -translate-x-1/2 items-center justify-center gap-2 rounded-full bg-[var(--accent-primary)] px-5 py-4 text-sm font-bold text-[var(--text-on-accent)] shadow-[0_18px_36px_rgba(232,168,87,0.28)] transition-[transform,box-shadow] duration-150 motion-reduce:transition-none motion-safe:hover:-translate-x-1/2 motion-safe:hover:-translate-y-0.5"
         onClick={() => openBottomSheet("add-transaction")}
         type="button"
       >

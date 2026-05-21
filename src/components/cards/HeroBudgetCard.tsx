@@ -29,12 +29,12 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
   return (
     <section className="overflow-hidden rounded-[32px] border border-[rgba(255,243,220,0.14)] bg-[linear-gradient(145deg,rgba(232,168,87,0.28),rgba(143,184,150,0.16))] p-5 shadow-[var(--shadow-card)]">
       <div className="space-y-5">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-4">
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-secondary)]">
               Budget bulan ini
             </p>
-            <h2 className="font-display text-[38px] leading-none font-bold text-[var(--text-primary)]">
+            <h2 className="font-display text-[32px] leading-none font-bold text-[var(--text-primary)]">
               {budgetUsage ? formatCurrency(budgetUsage.remaining) : "Belum diatur"}
             </h2>
             <p className="max-w-[24ch] text-sm leading-6 text-[var(--text-secondary)]">
@@ -43,7 +43,7 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
                 : "Pasang budget bulanan dulu ya, nanti Home bakal bantu mantau sisanya."}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[rgba(255,243,220,0.14)] bg-[rgba(26,20,16,0.22)] px-4 py-3 text-right">
+          <div className="self-start rounded-[24px] border border-[rgba(255,243,220,0.14)] bg-[rgba(26,20,16,0.22)] px-4 py-3 text-right">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
               Progress
             </p>
@@ -53,7 +53,7 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
               Budget
@@ -70,7 +70,7 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
               {formatCurrency(budgetUsage?.used ?? 0)}
             </p>
           </div>
-          <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
+          <div className="col-span-2 rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
               Sisa
             </p>

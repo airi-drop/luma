@@ -46,12 +46,13 @@ export function PageWrapper({
 
   return (
     <div className="min-h-dvh bg-[var(--bg-main)] text-[var(--text-primary)]">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         {backgroundUrl ? (
           <div
             className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${backgroundUrl})`,
+              willChange: blurAmount > 0 ? "filter" : undefined,
               ...blurStyle,
             }}
           />
@@ -75,7 +76,7 @@ export function PageWrapper({
       </div>
 
       <div className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col px-5 pb-28 pt-6">
-        <header className="mb-6 flex items-start justify-between gap-4">
+        <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
               Luma
@@ -91,7 +92,7 @@ export function PageWrapper({
               ) : null}
             </div>
           </div>
-          {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
+          {headerAction ? <div className="self-start sm:shrink-0">{headerAction}</div> : null}
         </header>
 
         <main className="flex-1 space-y-6">{children}</main>
@@ -114,5 +115,5 @@ function getBackgroundSize(background?: BackgroundAsset) {
     return null;
   }
 
-  return `${background.width}×${background.height}`;
+  return `${background.width}x${background.height}`;
 }

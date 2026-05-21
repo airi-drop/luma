@@ -1,3 +1,4 @@
+import { useEffect, useId } from "react";
 import type { PropsWithChildren, ReactNode } from "react";
 
 type BottomSheetProps = PropsWithChildren<{
@@ -16,6 +17,25 @@ export function BottomSheet({
   onClose,
   title,
 }: BottomSheetProps) {
+  const titleId = useId();
+
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) {
     return null;
   }
@@ -28,11 +48,19 @@ export function BottomSheet({
         onClick={onClose}
         type="button"
       />
-      <section className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-[480px] flex-col rounded-t-[28px] border border-[var(--border-soft)] bg-[var(--bg-elevated)] px-5 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3 shadow-[0_-12px_40px_rgba(0,0,0,0.32)]">
+      <section
+        aria-labelledby={titleId}
+        aria-modal="true"
+        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-[480px] flex-col rounded-t-[28px] border border-[var(--border-soft)] bg-[var(--bg-elevated)] px-5 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3 shadow-[0_-12px_40px_rgba(0,0,0,0.32)]"
+        role="dialog"
+      >
         <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-[var(--border-soft)]" />
         <div className="mb-5 flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <h2 className="font-display text-2xl font-bold text-[var(--text-primary)]">
+            <h2
+              id={titleId}
+              className="font-display text-2xl font-bold text-[var(--text-primary)]"
+            >
               {title}
             </h2>
             {description ? (

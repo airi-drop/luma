@@ -20,11 +20,6 @@ import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
-import {
-  exportMonthlyReportPdf,
-  exportMonthlySpreadsheetCsv,
-  exportMonthlySpreadsheetXlsx,
-} from "../features/reports/export";
 import { buildMonthlyReportData } from "../features/reports/reporting";
 import { formatCurrency } from "../lib/currency";
 import { formatDateLabel } from "../lib/date";
@@ -94,6 +89,7 @@ export function ReportsPage() {
     setIsExportingPdf(true);
 
     try {
+      const { exportMonthlyReportPdf } = await import("../features/reports/export");
       await exportMonthlyReportPdf(selectedMonth, reportRef.current);
     } finally {
       setIsExportingPdf(false);
@@ -104,6 +100,7 @@ export function ReportsPage() {
     setIsExportingXlsx(true);
 
     try {
+      const { exportMonthlySpreadsheetXlsx } = await import("../features/reports/export");
       await exportMonthlySpreadsheetXlsx(selectedMonth);
     } finally {
       setIsExportingXlsx(false);
@@ -114,6 +111,7 @@ export function ReportsPage() {
     setIsExportingCsv(true);
 
     try {
+      const { exportMonthlySpreadsheetCsv } = await import("../features/reports/export");
       await exportMonthlySpreadsheetCsv(selectedMonth);
     } finally {
       setIsExportingCsv(false);

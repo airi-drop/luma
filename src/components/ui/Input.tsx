@@ -24,7 +24,7 @@ export function Input({
       <input
         id={inputId}
         className={[
-          "min-h-14 rounded-2xl border bg-[var(--bg-card-soft)] px-4 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)]",
+          "min-h-14 rounded-2xl border bg-[var(--bg-card-soft)] px-4 text-sm text-[var(--text-primary)] outline-none transition-colors motion-reduce:transition-none placeholder:text-[var(--text-muted)]",
           error
             ? "border-[rgba(217,108,95,0.4)]"
             : "border-[var(--border-soft)] focus:border-[var(--accent-primary)]",

@@ -29,7 +29,7 @@ export function Button({
     <button
       type={type}
       className={[
-        "inline-flex min-h-[52px] items-center justify-center rounded-full px-5 text-sm font-bold transition-transform duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex min-h-[52px] items-center justify-center rounded-full px-5 text-sm font-bold transition-[transform,box-shadow,background-color,border-color,color] duration-150 motion-reduce:transform-none motion-reduce:transition-none motion-safe:hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60",
         fullWidth ? "w-full" : "",
         variantClasses[variant],
         className,
