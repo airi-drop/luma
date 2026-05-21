@@ -8,6 +8,7 @@ import type {
   SavingGoalProgress,
   Transaction,
 } from "../types";
+import { getCurrentDate } from "./date";
 
 function clampPercentage(value: number) {
   if (!Number.isFinite(value) || value <= 0) {
@@ -23,7 +24,7 @@ export function getMonthlyTotal(transactions: Transaction[]) {
 
 export function getTodayTotal(
   transactions: Transaction[],
-  today = new Date().toISOString().slice(0, 10),
+  today = getCurrentDate(),
 ) {
   return transactions
     .filter((transaction) => transaction.date === today)
@@ -51,6 +52,10 @@ export function getCategoryTotals(
     .sort((left, right) => right.total - left.total);
 }
 
+export function getTopCategory(transactions: Transaction[]) {
+  return getCategoryTotals(transactions)[0] ?? null;
+}
+
 export function getBudgetUsage(
   monthlyBudget: MonthlyBudget | null,
   transactions: Transaction[],
@@ -71,6 +76,34 @@ export function getBudgetUsage(
     remaining,
     percentage,
   };
+}
+
+export function getBudgetStatus(percentage: number) {
+  if (percentage >= 1) {
+    return {
+      tone: "panic",
+      label: "Budgetnya sudah lewat sedikit. Pelan-pelan kita rapihin lagi ya.",
+    } as const;
+  }
+
+  if (percentage >= 0.8) {
+    return {
+      tone: "worried",
+      label: "Budget mulai tipis. Boleh cek lagi sebelum belanja berikutnya.",
+    } as const;
+  }
+
+  if (percentage >= 0.5) {
+    return {
+      tone: "chill",
+      label: "Masih aman, tapi sudah mulai kepakai lumayan.",
+    } as const;
+  }
+
+  return {
+    tone: "happy",
+    label: "Dompetmu masih aman hari ini.",
+  } as const;
 }
 
 export function getCategoryBudgetUsage(
