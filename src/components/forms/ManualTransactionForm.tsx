@@ -9,15 +9,18 @@ import {
   MOOD_TYPES,
   type AccountType,
   type CategoryType,
-  type CreateTransactionInput,
   type MoodType,
+  type CreateTransactionInput,
 } from "../../types";
 
 type FormErrors = Partial<Record<keyof ManualTransactionValues, string>>;
+export type ManualTransactionFormInput = Omit<CreateTransactionInput, "source">;
 
 interface ManualTransactionFormProps {
   isSubmitting?: boolean;
-  onSubmit: (input: CreateTransactionInput) => Promise<void>;
+  initialValues?: Partial<ManualTransactionFormInput>;
+  submitLabel?: string;
+  onSubmit: (input: ManualTransactionFormInput) => Promise<void>;
 }
 
 interface ManualTransactionValues {
@@ -30,15 +33,19 @@ interface ManualTransactionValues {
   note: string;
 }
 
-const initialValues: ManualTransactionValues = {
-  nominal: "",
-  detail: "",
-  category: "",
-  account: "",
-  date: getCurrentDate(),
-  mood: "",
-  note: "",
-};
+function getFormValues(
+  values?: Partial<ManualTransactionFormInput>,
+): ManualTransactionValues {
+  return {
+    nominal: values?.nominal ? String(values.nominal) : "",
+    detail: values?.detail ?? "",
+    category: values?.category ?? "",
+    account: values?.account ?? "",
+    date: values?.date ?? getCurrentDate(),
+    mood: values?.mood ?? "",
+    note: values?.note ?? "",
+  };
+}
 
 function SelectField({
   label,
@@ -149,10 +156,12 @@ function validate(values: ManualTransactionValues) {
 }
 
 export function ManualTransactionForm({
+  initialValues: providedInitialValues,
   isSubmitting = false,
+  submitLabel = "Simpan Transaksi",
   onSubmit,
 }: ManualTransactionFormProps) {
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(() => getFormValues(providedInitialValues));
   const [errors, setErrors] = useState<FormErrors>({});
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -173,9 +182,8 @@ export function ManualTransactionForm({
       date: values.date,
       mood: values.mood ? (values.mood as MoodType) : undefined,
       note: values.note.trim() || undefined,
-      source: "manual",
     });
-    setValues(initialValues);
+    setValues(getFormValues(providedInitialValues));
   }
 
   return (
@@ -262,7 +270,7 @@ export function ManualTransactionForm({
         value={values.note}
       />
       <Button disabled={isSubmitting} fullWidth type="submit">
-        {isSubmitting ? "Menyimpan..." : "Simpan Transaksi"}
+        {isSubmitting ? "Menyimpan..." : submitLabel}
       </Button>
     </form>
   );

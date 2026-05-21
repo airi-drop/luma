@@ -100,8 +100,7 @@ export const transactionsRepo = {
       const matchAccount = params.account ? item.account === params.account : true;
       const query = params.query?.trim().toLowerCase();
       const matchQuery = query
-        ? item.detail.toLowerCase().includes(query) ||
-          item.note?.toLowerCase().includes(query)
+        ? item.detail.toLowerCase().includes(query)
         : true;
 
       return matchCategory && matchAccount && matchQuery;

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useBudgetsStore } from "../../stores/budgets.store";
 import { useTransactionsStore } from "../../stores/transactions.store";
 import { useUiStore } from "../../stores/ui.store";
-import type { CreateTransactionInput } from "../../types";
-import { ManualTransactionForm } from "../forms/ManualTransactionForm";
+import {
+  ManualTransactionForm,
+  type ManualTransactionFormInput,
+} from "../forms/ManualTransactionForm";
 import { BottomSheet } from "../ui/BottomSheet";
 
 export function AddTransactionSheet() {
@@ -15,7 +17,7 @@ export function AddTransactionSheet() {
   const currentMonth = useTransactionsStore((state) => state.month);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(input: CreateTransactionInput) {
+  async function handleSubmit(input: ManualTransactionFormInput) {
     setIsSubmitting(true);
 
     try {

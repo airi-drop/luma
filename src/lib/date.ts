@@ -21,3 +21,30 @@ export function getMonthFromDate(date: string) {
 export function nowIso() {
   return new Date().toISOString();
 }
+
+export function formatMonthLabel(month: string) {
+  const [year, monthValue] = month.split("-").map(Number);
+
+  if (!year || !monthValue) {
+    return month;
+  }
+
+  return new Intl.DateTimeFormat("id-ID", {
+    month: "long",
+    year: "numeric",
+  }).format(new Date(year, monthValue - 1, 1));
+}
+
+export function formatDateLabel(date: string) {
+  const [year, monthValue, day] = date.split("-").map(Number);
+
+  if (!year || !monthValue || !day) {
+    return date;
+  }
+
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(year, monthValue - 1, day));
+}
