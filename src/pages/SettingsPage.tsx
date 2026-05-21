@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Card } from "../components/ui/Card";
+import { useSettingsStore } from "../stores/settings.store";
 
 export function SettingsPage() {
+  const settings = useSettingsStore((state) => state.settings);
+  const backgrounds = useSettingsStore((state) => state.backgrounds);
+
   return (
     <PageWrapper
       title="Settings"
@@ -19,12 +23,24 @@ export function SettingsPage() {
     >
       <Card title="Theme">
         <p className="text-sm leading-6 text-[var(--text-secondary)]">
-          Sistem token warna sudah aktif lewat CSS variables.
+          Sistem token warna sudah aktif lewat CSS variables. Theme aktif:{" "}
+          <span className="font-semibold text-[var(--text-primary)]">
+            {settings?.activeThemeId ?? "cozy-dark"}
+          </span>
         </p>
       </Card>
       <Card title="Character">
         <p className="text-sm leading-6 text-[var(--text-secondary)]">
-          Picker character belum dibuat di sprint ini.
+          Character aktif sekarang{" "}
+          <span className="font-semibold text-[var(--text-primary)]">
+            {settings?.activeCharacterId ?? "otter"}
+          </span>
+          . Picker penuh belum dibuat di sprint ini.
+        </p>
+      </Card>
+      <Card title="Background">
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">
+          {backgrounds.length} background tersimpan di IndexedDB sebagai asset terpisah.
         </p>
       </Card>
     </PageWrapper>

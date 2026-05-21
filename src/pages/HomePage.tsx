@@ -2,12 +2,32 @@ import { Link } from "react-router-dom";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { useBudgetsStore } from "../stores/budgets.store";
+import { useSavingGoalsStore } from "../stores/saving-goals.store";
+import { useSettingsStore } from "../stores/settings.store";
+import { useTransactionsStore } from "../stores/transactions.store";
+
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 export function HomePage() {
+  const settings = useSettingsStore((state) => state.settings);
+  const monthlyTotal = useTransactionsStore((state) => state.monthlyTotal);
+  const todayTotal = useTransactionsStore((state) => state.todayTotal);
+  const items = useTransactionsStore((state) => state.items);
+  const budgetUsage = useBudgetsStore((state) => state.budgetUsage);
+  const goals = useSavingGoalsStore((state) => state.goals);
+  const topCategory = useTransactionsStore((state) => state.categoryTotals[0]);
+
   return (
     <PageWrapper
-      title="Space uangmu"
-      description="Catatan, budget, dan target nanti bakal tinggal di sini. Untuk sekarang, shell utamanya sudah siap."
+      title={settings?.name ? `Halo, ${settings.name}` : "Space uangmu"}
+      description="Fondasi data lokal sudah aktif. Manual flow tetap jadi prioritas, AI masih belum ikut campur."
       headerAction={
         <Link
           to="/settings"
@@ -24,15 +44,20 @@ export function HomePage() {
               <p className="text-sm text-[var(--text-secondary)]">
                 Budget bulan ini
               </p>
-              <p className="font-display text-4xl font-bold">Rp0</p>
+              <p className="font-display text-4xl font-bold">
+                {budgetUsage ? formatCurrency(budgetUsage.remaining) : "Belum diatur"}
+              </p>
             </div>
             <div className="rounded-full bg-[var(--bg-card)] px-4 py-2 text-3xl">
-              otter
+              {settings?.activeCharacterId ?? "otter"}
             </div>
           </div>
           <p className="text-sm leading-6 text-[var(--text-secondary)]">
-            Budget detail belum diisi. Nanti shortcut-nya tetap lewat Home,
-            bukan tab terpisah.
+            {budgetUsage
+              ? `Terpakai ${formatCurrency(budgetUsage.used)} dari ${formatCurrency(
+                  budgetUsage.limit,
+                )}.`
+              : "Budget detail belum diisi. Shortcut-nya tetap lewat Home, bukan tab terpisah."}
           </p>
           <Link
             to="/budget"
@@ -46,20 +71,20 @@ export function HomePage() {
       <div className="grid grid-cols-2 gap-3">
         <Card title="Transaksi" subtitle="Flow manual jadi prioritas utama.">
           <p className="text-sm text-[var(--text-secondary)]">
-            Placeholder untuk ringkasan harian.
+            Hari ini {formatCurrency(todayTotal)} dari {items.length} catatan bulan ini.
           </p>
         </Card>
         <Card title="Target" subtitle="Tabungan tetap terasa ringan.">
           <p className="text-sm text-[var(--text-secondary)]">
-            Placeholder progress target.
+            {goals.length} target tersimpan. {goals.filter((goal) => goal.status === "completed").length} sudah selesai.
           </p>
         </Card>
       </div>
 
-      <Card title="Catatan awal" subtitle="Sprint 0 dan 1 fokus ke fondasi.">
+      <Card title="Catatan awal" subtitle="Sprint 2 fokus ke fondasi data.">
         <p className="mb-4 text-sm leading-6 text-[var(--text-secondary)]">
-          AI belum diaktifkan. Login, cloud sync, dan gamification juga belum
-          ada.
+          Total bulan ini {formatCurrency(monthlyTotal)}.
+          {topCategory ? ` Kategori paling aktif sementara ${topCategory.category}.` : " Belum ada transaksi yang tersimpan."}
         </p>
         <Button fullWidth>Simpan Transaksi</Button>
       </Card>
