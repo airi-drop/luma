@@ -3,6 +3,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { formatCurrency } from "../../lib/currency";
 import { getCurrentDate } from "../../lib/date";
+import { isValidTransactionDate } from "../../lib/transaction-validation";
 import {
   ACCOUNT_TYPES,
   CATEGORY_TYPES,
@@ -147,6 +148,8 @@ function validate(values: ManualTransactionValues) {
 
   if (!values.date) {
     errors.date = "Tanggalnya belum diisi. Pakai hari ini juga boleh.";
+  } else if (!isValidTransactionDate(values.date)) {
+    errors.date = "Tanggalnya belum kebaca valid. Coba cek lagi ya.";
   }
 
   return {

@@ -1,6 +1,11 @@
 import { nanoid } from "nanoid";
 import { getLumaDb } from "../client";
 import { getMonthFromDate, nowIso } from "../../lib/date";
+import {
+  isValidAccountType,
+  isValidCategoryType,
+  isValidTransactionDate,
+} from "../../lib/transaction-validation";
 import type {
   CreateTransactionInput,
   Transaction,
@@ -15,8 +20,32 @@ function sortTransactions(transactions: Transaction[]) {
   );
 }
 
+function assertValidTransaction(input: CreateTransactionInput) {
+  if (!input.detail.trim()) {
+    throw new Error("Detail transaksinya masih kosong.");
+  }
+
+  if (!Number.isFinite(input.nominal) || input.nominal <= 0) {
+    throw new Error("Nominal transaksi harus lebih dari nol ya.");
+  }
+
+  if (!isValidCategoryType(input.category)) {
+    throw new Error("Kategori transaksi belum valid.");
+  }
+
+  if (!isValidAccountType(input.account)) {
+    throw new Error("Akun transaksi belum valid.");
+  }
+
+  if (!isValidTransactionDate(input.date)) {
+    throw new Error("Tanggal transaksi belum valid.");
+  }
+}
+
 export const transactionsRepo = {
   async create(input: CreateTransactionInput) {
+    assertValidTransaction(input);
+
     const database = await getLumaDb();
     const timestamp = nowIso();
     const transaction: Transaction = {
@@ -50,6 +79,24 @@ export const transactionsRepo = {
     }
 
     const date = input.date ?? current.date;
+    const nextInput: CreateTransactionInput = {
+      date,
+      detail: input.detail ?? current.detail,
+      nominal: input.nominal ?? current.nominal,
+      account: input.account ?? current.account,
+      category: input.category ?? current.category,
+      mood: input.mood ?? current.mood,
+      note:
+        input.note === undefined
+          ? current.note
+          : input.note,
+      source: input.source ?? current.source,
+      isRecurring: input.isRecurring ?? current.isRecurring,
+      recurringRuleId: input.recurringRuleId ?? current.recurringRuleId,
+    };
+
+    assertValidTransaction(nextInput);
+
     const next: Transaction = {
       ...current,
       ...input,

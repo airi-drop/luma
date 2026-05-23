@@ -50,9 +50,29 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     }
   },
   async updateSettings(input) {
-    const settings = await settingsRepo.update(input);
-    set({ settings });
-    return settings;
+    const current = get().settings;
+
+    if (!current) {
+      const settings = await settingsRepo.update(input);
+      set({ settings });
+      return settings;
+    }
+
+    const optimisticSettings = {
+      ...current,
+      ...input,
+    };
+
+    set({ settings: optimisticSettings });
+
+    try {
+      const settings = await settingsRepo.update(input);
+      set({ settings });
+      return settings;
+    } catch (error) {
+      set({ settings: current });
+      throw error;
+    }
   },
   async resetCustomization() {
     const settings = await settingsRepo.update(DEFAULT_CUSTOMIZATION);

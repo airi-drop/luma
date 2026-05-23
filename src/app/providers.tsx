@@ -1,8 +1,8 @@
 import { type PropsWithChildren, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { appDataRepo } from "../db/repositories/app-data.repo";
 import { applyTheme, getStoredThemeId } from "../features/customization/theme";
 import {
-  clearAllTransactions,
   seedDummyData,
 } from "../features/transactions/seed";
 import { useBudgetsStore } from "../stores/budgets.store";
@@ -73,9 +73,9 @@ function DataBootstrap() {
     };
 
     win.lumaClear = async () => {
-      const removed = await clearAllTransactions();
+      const removed = await appDataRepo.clearFinanceData();
       await refresh();
-      console.info(`[luma] Cleared ${removed} transactions.`);
+      console.info(`[luma] Cleared ${removed} finance records.`);
       return removed;
     };
 
