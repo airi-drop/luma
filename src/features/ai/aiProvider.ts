@@ -2,10 +2,41 @@ import type { AIProvider } from "../../types";
 import type { GeminiRequestOptions } from "./types";
 import { AIError } from "./types";
 
+/**
+ * Build-time injected env (via vite.config.ts define).
+ * Dijamin inline ke bundle saat build, termasuk di Vercel.
+ */
+declare const __LUMA_ENV__: {
+  geminiKey: string;
+  openaiKey: string;
+  openrouterKey: string;
+  universalKey: string;
+  provider: string;
+  model: string;
+};
+
+function getEnv() {
+  // __LUMA_ENV__ di-define di vite.config.ts via `define` →
+  // diganti jadi literal object saat build.
+  if (typeof __LUMA_ENV__ !== "undefined" && __LUMA_ENV__) {
+    return __LUMA_ENV__;
+  }
+
+  // Fallback ke import.meta.env (lokal dev / non-Vercel).
+  return {
+    geminiKey: import.meta.env.VITE_GEMINI_API_KEY ?? "",
+    openaiKey: import.meta.env.VITE_OPENAI_API_KEY ?? "",
+    openrouterKey: import.meta.env.VITE_OPENROUTER_API_KEY ?? "",
+    universalKey: import.meta.env.VITE_AI_API_KEY ?? "",
+    provider: import.meta.env.VITE_AI_PROVIDER ?? "",
+    model: import.meta.env.VITE_AI_MODEL ?? "",
+  };
+}
+
 interface AIProviderConfig {
   id: AIProvider;
   defaultModel: string;
-  envApiKey: string | undefined;
+  readonly envApiKey: string | undefined;
   resolveEndpoint: (model: string) => string;
   buildHeaders: (apiKey: string) => Record<string, string>;
   buildBody: (prompt: string, model: string) => unknown;
@@ -16,7 +47,9 @@ const PROVIDERS: Record<AIProvider, AIProviderConfig> = {
   gemini: {
     id: "gemini",
     defaultModel: "gemini-2.5-flash",
-    envApiKey: import.meta.env.VITE_GEMINI_API_KEY,
+    get envApiKey() {
+      return getEnv().geminiKey;
+    },
     resolveEndpoint: (model) =>
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
     buildHeaders: (apiKey) => ({
@@ -47,7 +80,9 @@ const PROVIDERS: Record<AIProvider, AIProviderConfig> = {
   openai: {
     id: "openai",
     defaultModel: "gpt-4o-mini",
-    envApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    get envApiKey() {
+      return getEnv().openaiKey;
+    },
     resolveEndpoint: () => "https://api.openai.com/v1/chat/completions",
     buildHeaders: (apiKey) => ({
       "Content-Type": "application/json",
@@ -74,7 +109,9 @@ const PROVIDERS: Record<AIProvider, AIProviderConfig> = {
   openrouter: {
     id: "openrouter",
     defaultModel: "google/gemini-2.5-flash",
-    envApiKey: import.meta.env.VITE_OPENROUTER_API_KEY,
+    get envApiKey() {
+      return getEnv().openrouterKey;
+    },
     resolveEndpoint: () => "https://openrouter.ai/api/v1/chat/completions",
     buildHeaders: (apiKey) => ({
       "Content-Type": "application/json",
@@ -106,7 +143,7 @@ const PROVIDERS: Record<AIProvider, AIProviderConfig> = {
 };
 
 function resolveProvider(): AIProvider {
-  const fromEnv = import.meta.env.VITE_AI_PROVIDER?.trim().toLowerCase();
+  const fromEnv = getEnv().provider.trim().toLowerCase();
   if (fromEnv === "openai" || fromEnv === "openrouter" || fromEnv === "gemini") {
     return fromEnv;
   }
@@ -122,17 +159,15 @@ interface ResolvedConfig {
 function resolveConfig(): ResolvedConfig {
   const provider = resolveProvider();
   const config = PROVIDERS[provider];
+  const env = getEnv();
   const apiKey =
-    (config.envApiKey?.trim() ||
-      import.meta.env.VITE_AI_API_KEY?.trim() ||
-      "");
+    (config.envApiKey?.trim() || env.universalKey.trim() || "");
 
   if (!apiKey) {
     throw new AIError("MISSING_API_KEY");
   }
 
-  const model =
-    import.meta.env.VITE_AI_MODEL?.trim() || config.defaultModel;
+  const model = env.model.trim() || config.defaultModel;
 
   return { config, apiKey, model };
 }
