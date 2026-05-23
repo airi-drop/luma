@@ -4,6 +4,29 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  define: {
+    // Explicit env injection supaya Vercel deploy pasti bawa env vars ke
+    // client bundle. Vite seharusnya handle ini otomatis via import.meta.env,
+    // tapi beberapa hosting (Vercel) kadang tidak forward VITE_* correctly.
+    "import.meta.env.VITE_GEMINI_API_KEY": JSON.stringify(
+      process.env.VITE_GEMINI_API_KEY ?? "",
+    ),
+    "import.meta.env.VITE_OPENAI_API_KEY": JSON.stringify(
+      process.env.VITE_OPENAI_API_KEY ?? "",
+    ),
+    "import.meta.env.VITE_OPENROUTER_API_KEY": JSON.stringify(
+      process.env.VITE_OPENROUTER_API_KEY ?? "",
+    ),
+    "import.meta.env.VITE_AI_PROVIDER": JSON.stringify(
+      process.env.VITE_AI_PROVIDER ?? "",
+    ),
+    "import.meta.env.VITE_AI_MODEL": JSON.stringify(
+      process.env.VITE_AI_MODEL ?? "",
+    ),
+    "import.meta.env.VITE_AI_API_KEY": JSON.stringify(
+      process.env.VITE_AI_API_KEY ?? "",
+    ),
+  },
   plugins: [
     react(),
     tailwindcss(),
