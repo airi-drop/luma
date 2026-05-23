@@ -1,33 +1,43 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig({
-  define: {
-    // Explicit env injection supaya Vercel deploy pasti bawa env vars ke
-    // client bundle. Vite seharusnya handle ini otomatis via import.meta.env,
-    // tapi beberapa hosting (Vercel) kadang tidak forward VITE_* correctly.
-    "import.meta.env.VITE_GEMINI_API_KEY": JSON.stringify(
-      process.env.VITE_GEMINI_API_KEY ?? "",
-    ),
-    "import.meta.env.VITE_OPENAI_API_KEY": JSON.stringify(
-      process.env.VITE_OPENAI_API_KEY ?? "",
-    ),
-    "import.meta.env.VITE_OPENROUTER_API_KEY": JSON.stringify(
-      process.env.VITE_OPENROUTER_API_KEY ?? "",
-    ),
-    "import.meta.env.VITE_AI_PROVIDER": JSON.stringify(
-      process.env.VITE_AI_PROVIDER ?? "",
-    ),
-    "import.meta.env.VITE_AI_MODEL": JSON.stringify(
-      process.env.VITE_AI_MODEL ?? "",
-    ),
-    "import.meta.env.VITE_AI_API_KEY": JSON.stringify(
-      process.env.VITE_AI_API_KEY ?? "",
-    ),
-  },
-  plugins: [
+export default defineConfig(({ mode }) => {
+  // loadEnv membaca .env, .env.local, .env.[mode], dll
+  // dan mengembalikan object { VITE_GEMINI_API_KEY: "...", ... }
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    define: {
+      __LUMA_ENV__: JSON.stringify({
+        geminiKey:
+          env.VITE_GEMINI_API_KEY ||
+          env.GEMINI_API_KEY ||
+          "",
+        openaiKey:
+          env.VITE_OPENAI_API_KEY ||
+          env.OPENAI_API_KEY ||
+          "",
+        openrouterKey:
+          env.VITE_OPENROUTER_API_KEY ||
+          env.OPENROUTER_API_KEY ||
+          "",
+        universalKey:
+          env.VITE_AI_API_KEY ||
+          env.AI_API_KEY ||
+          "",
+        provider:
+          env.VITE_AI_PROVIDER ||
+          env.AI_PROVIDER ||
+          "",
+        model:
+          env.VITE_AI_MODEL ||
+          env.AI_MODEL ||
+          "",
+      }),
+    },
+    plugins: [
     react(),
     tailwindcss(),
     VitePWA({
@@ -115,4 +125,5 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5173,
   },
+  };
 });
