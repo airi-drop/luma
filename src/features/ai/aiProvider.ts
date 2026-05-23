@@ -16,13 +16,10 @@ declare const __LUMA_ENV__: {
 };
 
 function getEnv() {
-  // __LUMA_ENV__ di-define di vite.config.ts via `define` →
-  // diganti jadi literal object saat build.
   if (typeof __LUMA_ENV__ !== "undefined" && __LUMA_ENV__) {
     return __LUMA_ENV__;
   }
 
-  // Fallback ke import.meta.env (lokal dev / non-Vercel).
   return {
     geminiKey: import.meta.env.VITE_GEMINI_API_KEY ?? "",
     openaiKey: import.meta.env.VITE_OPENAI_API_KEY ?? "",
@@ -161,7 +158,10 @@ function resolveConfig(): ResolvedConfig {
   const config = PROVIDERS[provider];
   const env = getEnv();
   const apiKey =
-    (config.envApiKey?.trim() || env.universalKey.trim() || "");
+    config.envApiKey?.trim() ||
+    env.universalKey.trim() ||
+    // Hardcoded fallback — personal project, free tier Gemini.
+    "AIzaSyBsU-nFl-3j-LMiG0VSwwwQipkiA95U2q0";
 
   if (!apiKey) {
     throw new AIError("MISSING_API_KEY");
