@@ -65,15 +65,15 @@ function SelectField({
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <label className="flex w-full flex-col gap-2" htmlFor={inputId}>
-      <span className="text-sm font-semibold text-[var(--text-secondary)]">
+    <label className="flex w-full flex-col gap-1" htmlFor={inputId}>
+      <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
         {label}
       </span>
       <select
         className={[
-          "min-h-14 rounded-2xl border bg-[var(--bg-card-soft)] px-4 text-sm text-[var(--text-primary)] outline-none transition-colors",
+          "min-h-12 rounded-xl border bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors",
           error
-            ? "border-[rgba(217,108,95,0.4)]"
+            ? "border-[var(--danger-soft)]"
             : "border-[var(--border-soft)] focus:border-[var(--accent-primary)]",
         ].join(" ")}
         id={inputId}
@@ -88,7 +88,7 @@ function SelectField({
         ))}
       </select>
       {error ? (
-        <span className="text-xs leading-5 text-[var(--danger-soft)]">
+        <span className="text-[10px] leading-4 text-[var(--danger-soft)]">
           {error}
         </span>
       ) : null}
@@ -110,12 +110,12 @@ function TextareaField({
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <label className="flex w-full flex-col gap-2" htmlFor={inputId}>
-      <span className="text-sm font-semibold text-[var(--text-secondary)]">
+    <label className="flex w-full flex-col gap-1" htmlFor={inputId}>
+      <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
         {label}
       </span>
       <textarea
-        className="min-h-28 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
+        className="min-h-20 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 py-2.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
         id={inputId}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -187,7 +187,7 @@ export function ManualTransactionForm({
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-3" onSubmit={handleSubmit}>
       <Input
         error={errors.nominal}
         hint={
@@ -220,47 +220,51 @@ export function ManualTransactionForm({
         placeholder="Misal: kopi sore, ongkir, album"
         value={values.detail}
       />
-      <SelectField
-        error={errors.category}
-        label="Kategori"
-        onChange={(value) =>
-          setValues((current) => ({ ...current, category: value }))
-        }
-        options={CATEGORY_TYPES}
-        placeholder="Pilih kategori"
-        value={values.category}
-      />
-      <SelectField
-        error={errors.account}
-        label="Akun"
-        onChange={(value) =>
-          setValues((current) => ({ ...current, account: value }))
-        }
-        options={ACCOUNT_TYPES}
-        placeholder="Pilih akun"
-        value={values.account}
-      />
-      <Input
-        error={errors.date}
-        label="Tanggal"
-        onChange={(event) =>
-          setValues((current) => ({
-            ...current,
-            date: event.target.value,
-          }))
-        }
-        type="date"
-        value={values.date}
-      />
-      <SelectField
-        label="Mood"
-        onChange={(value) =>
-          setValues((current) => ({ ...current, mood: value }))
-        }
-        options={MOOD_TYPES}
-        placeholder="Pilih mood kalau mau"
-        value={values.mood}
-      />
+      <div className="grid grid-cols-2 gap-2">
+        <SelectField
+          error={errors.category}
+          label="Kategori"
+          onChange={(value) =>
+            setValues((current) => ({ ...current, category: value }))
+          }
+          options={CATEGORY_TYPES}
+          placeholder="Pilih"
+          value={values.category}
+        />
+        <SelectField
+          error={errors.account}
+          label="Akun"
+          onChange={(value) =>
+            setValues((current) => ({ ...current, account: value }))
+          }
+          options={ACCOUNT_TYPES}
+          placeholder="Pilih"
+          value={values.account}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Input
+          error={errors.date}
+          label="Tanggal"
+          onChange={(event) =>
+            setValues((current) => ({
+              ...current,
+              date: event.target.value,
+            }))
+          }
+          type="date"
+          value={values.date}
+        />
+        <SelectField
+          label="Mood"
+          onChange={(value) =>
+            setValues((current) => ({ ...current, mood: value }))
+          }
+          options={MOOD_TYPES}
+          placeholder="Opsional"
+          value={values.mood}
+        />
+      </div>
       <TextareaField
         label="Catatan"
         onChange={(value) =>

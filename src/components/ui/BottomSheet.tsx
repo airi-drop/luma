@@ -51,7 +51,7 @@ export function BottomSheet({
       <section
         aria-labelledby={titleId}
         aria-modal="true"
-        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-[480px] flex-col rounded-t-[28px] border border-[var(--border-soft)] bg-[var(--bg-elevated)] px-5 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3 shadow-[0_-12px_40px_rgba(0,0,0,0.32)]"
+        className="absolute inset-x-0 bottom-0 mx-auto flex max-h-[90dvh] w-full max-w-[480px] flex-col rounded-t-[28px] border border-[var(--border-soft)] bg-[var(--bg-elevated)] px-5 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-3 shadow-[0_-12px_40px_rgba(122,90,72,0.18)]"
         role="dialog"
       >
         <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-[var(--border-soft)]" />

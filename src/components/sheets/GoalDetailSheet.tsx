@@ -249,19 +249,19 @@ function GoalDetailContent({
       onClose={onClose}
       title="Detail Target"
     >
-      <div className="space-y-4">
-        <Card className="overflow-hidden bg-[linear-gradient(150deg,rgba(232,168,87,0.18),rgba(143,184,150,0.12))]">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(255,243,220,0.14)] text-2xl">
+      <div className="space-y-3">
+        <Card className="overflow-hidden bg-[linear-gradient(150deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.14))]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--bg-card-soft)] text-xl">
                   {goal.icon}
                 </span>
-                <div>
-                  <p className="text-base font-bold text-[var(--text-primary)]">
+                <div className="min-w-0">
+                  <p className="truncate text-[14px] font-bold text-[var(--text-primary)]">
                     {goal.title}
                   </p>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-[11px] text-[var(--text-secondary)]">
                     {goal.status === "archived"
                       ? "Sedang diarsipkan dulu"
                       : progress.isCompleted
@@ -270,27 +270,27 @@ function GoalDetailContent({
                   </p>
                 </div>
               </div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
+              <p className="text-[12px] font-semibold text-[var(--text-primary)]">
                 {formatCurrency(progress.savedAmount)} /{" "}
                 {formatCurrency(progress.targetAmount)}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-sm font-bold text-[var(--text-primary)]">
+            <div className="shrink-0 text-right">
+              <p className="text-[13px] font-bold text-[var(--text-primary)]">
                 {Math.round(progress.percentage * 100)}%
               </p>
-              <p className="mt-1 text-xs text-[var(--text-muted)]">
+              <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
                 Sisa {formatCurrency(progress.remainingAmount)}
               </p>
             </div>
           </div>
-          <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-[rgba(255,243,220,0.08)]">
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--bg-card-soft)]">
             <div
               className="h-full rounded-full bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))]"
               style={{ width: `${Math.min(progress.percentage, 1) * 100}%` }}
             />
           </div>
-          <div className="mt-4 flex flex-wrap gap-3 text-xs text-[var(--text-secondary)]">
+          <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-[var(--text-secondary)]">
             <span>
               {goal.deadline
                 ? `Deadline ${formatDateLabel(goal.deadline)}`
@@ -299,7 +299,7 @@ function GoalDetailContent({
             <span>Dibuat {formatDateLabel(goal.createdAt.slice(0, 10))}</span>
           </div>
           {goal.note ? (
-            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-2 text-[12px] leading-5 text-[var(--text-secondary)]">
               {goal.note}
             </p>
           ) : null}
@@ -313,19 +313,19 @@ function GoalDetailContent({
               : "Setiap tambahan kecil langsung bikin progresnya ikut bergerak."
           }
         >
-          <form className="space-y-4" onSubmit={handleContributionSubmit}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <form className="space-y-3" onSubmit={handleContributionSubmit}>
+            <div className="grid grid-cols-2 gap-2">
               <Input
                 error={contributionAmountError}
                 hint={
                   contributionAmountError
                     ? undefined
                     : contributionAmount > 0
-                      ? `Akan menambah ${formatCurrency(contributionAmount)}`
-                      : "Tulis nominal yang mau ditambahkan."
+                      ? `+${formatCurrency(contributionAmount)}`
+                      : "Nominal yang ditambah."
                 }
                 inputMode="numeric"
-                label="Nominal tambahan"
+                label="Nominal"
                 onBlur={() =>
                   setTouched((state) => ({ ...state, contributionAmount: true }))
                 }
@@ -349,12 +349,12 @@ function GoalDetailContent({
               />
             </div>
 
-            <label className="flex flex-col gap-2" htmlFor="contribution-note">
-              <span className="text-sm font-semibold text-[var(--text-secondary)]">
+            <label className="flex flex-col gap-1" htmlFor="contribution-note">
+              <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
                 Catatan tambahan
               </span>
               <textarea
-                className="min-h-24 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
+                className="min-h-16 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 py-2.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
                 id="contribution-note"
                 onChange={(event) => setContributionNote(event.target.value)}
                 placeholder="Misal: hasil nabung minggu ini."
@@ -372,25 +372,25 @@ function GoalDetailContent({
           </form>
         </Card>
 
-        <Card title="Riwayat tambahan" subtitle="Biar kelihatan tabungannya tumbuh dari waktu ke waktu.">
+        <Card title="Riwayat tambahan" subtitle="Tabungan tumbuh dari waktu ke waktu.">
           {contributions.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {contributions.map((contribution) => (
                 <div
                   key={contribution.id}
-                  className="rounded-3xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4"
+                  className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-semibold text-[var(--text-primary)]">
                         {formatCurrency(contribution.amount)}
                       </p>
-                      <p className="mt-1 text-xs text-[var(--text-muted)]">
+                      <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
                         {formatDateLabel(contribution.date)}
                       </p>
                     </div>
                     {contribution.note ? (
-                      <p className="max-w-[22ch] text-right text-xs leading-5 text-[var(--text-secondary)]">
+                      <p className="max-w-[22ch] text-right text-[10px] leading-4 text-[var(--text-secondary)]">
                         {contribution.note}
                       </p>
                     ) : null}
@@ -399,14 +399,14 @@ function GoalDetailContent({
               ))}
             </div>
           ) : (
-            <p className="text-sm leading-6 text-[var(--text-secondary)]">
-              Belum ada tambahan tabungan di target ini. Mulai dari nominal kecil juga oke kok.
+            <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+              Belum ada tambahan tabungan. Mulai dari nominal kecil juga oke.
             </p>
           )}
         </Card>
 
-        <Card title="Edit target" subtitle="Kalau nominal atau detailnya berubah, rapihin dari sini aja.">
-          <form className="space-y-4" onSubmit={handleEditSubmit}>
+        <Card title="Edit target" subtitle="Rapihin nominal atau detail dari sini.">
+          <form className="space-y-3" onSubmit={handleEditSubmit}>
             <Input
               error={titleError}
               label="Nama target"
@@ -416,11 +416,11 @@ function GoalDetailContent({
               value={title}
             />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2">
               <Input
                 error={targetAmountError}
                 inputMode="numeric"
-                label="Target nominal"
+                label="Target"
                 onBlur={() =>
                   setTouched((state) => ({ ...state, targetAmount: true }))
                 }
@@ -433,9 +433,9 @@ function GoalDetailContent({
                 value={targetAmountText}
               />
               <Input
-                hint="Boleh diedit kalau mau disesuaikan manual."
+                hint="Boleh diedit manual."
                 inputMode="numeric"
-                label="Tabungan saat ini"
+                label="Saat ini"
                 onChange={(event) =>
                   setCurrentAmountText(
                     toCurrencyInput(parseCurrencyInput(event.target.value)),
@@ -456,12 +456,12 @@ function GoalDetailContent({
                 placeholder="🎧"
                 value={icon}
               />
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {iconSuggestions.map((suggestion) => (
                   <button
                     key={suggestion}
                     className={[
-                      "inline-flex h-11 w-11 items-center justify-center rounded-full border text-xl",
+                      "inline-flex h-9 w-9 items-center justify-center rounded-full border text-base",
                       icon === suggestion
                         ? "border-[var(--accent-primary)] bg-[var(--accent-surface)]"
                         : "border-[var(--border-soft)] bg-[var(--bg-card-soft)]",
@@ -482,12 +482,12 @@ function GoalDetailContent({
               value={deadline}
             />
 
-            <label className="flex flex-col gap-2" htmlFor="edit-goal-note">
-              <span className="text-sm font-semibold text-[var(--text-secondary)]">
+            <label className="flex flex-col gap-1" htmlFor="edit-goal-note">
+              <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
                 Catatan kecil
               </span>
               <textarea
-                className="min-h-24 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
+                className="min-h-16 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 py-2.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
                 id="edit-goal-note"
                 onChange={(event) => setNote(event.target.value)}
                 placeholder="Tambahkan catatan kalau perlu."
@@ -502,11 +502,11 @@ function GoalDetailContent({
         </Card>
 
         <Card
-          className="border-[rgba(217,108,95,0.18)] bg-[rgba(217,108,95,0.08)]"
+          className="border-[rgba(232,123,123,0.22)] bg-[rgba(232,123,123,0.08)]"
           title="Arsip & hapus"
-          subtitle="Kalau targetnya mau diistirahatin dulu atau memang sudah nggak dipakai."
+          subtitle="Istirahatin dulu atau hapus permanen."
         >
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Button
               disabled={goal.status === "archived" || isArchiving}
               fullWidth
@@ -517,18 +517,18 @@ function GoalDetailContent({
             </Button>
 
             {isConfirmingDelete ? (
-              <div className="space-y-3">
-                <p className="text-sm leading-6 text-[var(--text-secondary)]">
-                  Yakin mau hapus target ini? Riwayat tabungan di dalamnya ikut hilang juga.
+              <div className="space-y-2">
+                <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+                  Yakin mau hapus target ini? Riwayat tabungannya ikut hilang.
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Button
                     className="flex-1"
                     disabled={isDeleting}
                     onClick={() => setIsConfirmingDelete(false)}
                     variant="secondary"
                   >
-                    Batal dulu
+                    Batal
                   </Button>
                   <Button
                     className="flex-1 bg-[var(--danger-soft)] text-white shadow-none"

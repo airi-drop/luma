@@ -1,4 +1,3 @@
-import { Card } from "../ui/Card";
 import { formatCurrency } from "../../lib/currency";
 import type { CategoryTotal } from "../../types";
 
@@ -8,24 +7,36 @@ interface QuickStatsRowProps {
   topCategory: CategoryTotal | null;
 }
 
-function StatCard({
-  label,
-  value,
-  hint,
-}: {
+interface StatChipProps {
   label: string;
   value: string;
   hint: string;
-}) {
+  tint: "amber" | "sage" | "rose";
+}
+
+const tintStyles: Record<StatChipProps["tint"], { bg: string; border: string }> = {
+  amber: { bg: "var(--chip-amber)", border: "var(--chip-amber-border)" },
+  sage: { bg: "var(--chip-sage)", border: "var(--chip-sage-border)" },
+  rose: { bg: "var(--chip-rose)", border: "var(--chip-rose-border)" },
+};
+
+function StatChip({ label, value, hint, tint }: StatChipProps) {
+  const style = tintStyles[tint];
   return (
-    <Card className="h-full p-4" title={label}>
-      <p className="font-display text-2xl leading-none font-bold text-[var(--text-primary)]">
+    <article
+      className="flex min-w-0 flex-1 flex-col gap-0.5 rounded-2xl border p-2.5 shadow-[var(--shadow-card)] backdrop-blur-sm"
+      style={{ background: style.bg, borderColor: style.border }}
+    >
+      <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+        {label}
+      </p>
+      <p className="truncate font-display text-[14px] leading-tight font-bold text-[var(--text-primary)]">
         {value}
       </p>
-      <p className="mt-3 text-xs leading-5 text-[var(--text-secondary)]">
+      <p className="truncate text-[10px] leading-4 text-[var(--text-muted)]">
         {hint}
       </p>
-    </Card>
+    </article>
   );
 }
 
@@ -35,25 +46,28 @@ export function QuickStatsRow({
   topCategory,
 }: QuickStatsRowProps) {
   return (
-    <section className="grid grid-cols-3 gap-3">
-      <StatCard
-        hint="Semua pengeluaran di bulan aktif."
-        label="Total bulan ini"
+    <section className="flex items-stretch gap-2">
+      <StatChip
+        hint="Bulan aktif"
+        label="Total"
+        tint="amber"
         value={formatCurrency(monthlyTotal)}
       />
-      <StatCard
-        hint="Biar gampang cek ritme hari ini."
+      <StatChip
+        hint="Hari ini"
         label="Hari ini"
+        tint="sage"
         value={formatCurrency(todayTotal)}
       />
-      <StatCard
+      <StatChip
         hint={
           topCategory
-            ? `${formatCurrency(topCategory.total)} paling banyak ke sini.`
-            : "Nanti muncul setelah ada transaksi."
+            ? formatCurrency(topCategory.total)
+            : "Mulai catat dulu"
         }
-        label="Kategori terboros"
-        value={topCategory?.category ?? "Belum ada"}
+        label="Terboros"
+        tint="rose"
+        value={topCategory?.category ?? "—"}
       />
     </section>
   );

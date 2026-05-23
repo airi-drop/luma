@@ -12,9 +12,9 @@ function getCardTone(goal: SavingGoal, progress: SavingGoalProgress) {
   if (goal.status === "archived") {
     return {
       wrapper:
-        "border-[var(--border-soft)] bg-[rgba(255,243,220,0.05)] text-[var(--text-secondary)]",
+        "border-[var(--border-soft)] bg-[var(--bg-card-soft)] text-[var(--text-secondary)]",
       bar: "bg-[var(--text-muted)]",
-      badge: "bg-[rgba(255,243,220,0.08)] text-[var(--text-secondary)]",
+      badge: "bg-[var(--bg-card-soft)] text-[var(--text-secondary)]",
       label: "Diarsipkan",
     };
   }
@@ -22,18 +22,18 @@ function getCardTone(goal: SavingGoal, progress: SavingGoalProgress) {
   if (progress.isCompleted) {
     return {
       wrapper:
-        "border-[rgba(143,184,150,0.28)] bg-[linear-gradient(140deg,rgba(143,184,150,0.2),rgba(232,168,87,0.08))]",
+        "border-[rgba(var(--overlay-glow-secondary),0.32)] bg-[linear-gradient(140deg,rgba(var(--overlay-glow-secondary),0.22),rgba(var(--overlay-glow-primary),0.18))]",
       bar: "bg-[linear-gradient(90deg,var(--accent-secondary),var(--accent-primary))]",
-      badge: "bg-[rgba(143,184,150,0.16)] text-[var(--text-primary)]",
+      badge: "bg-[var(--accent-surface)] text-[var(--text-primary)]",
       label: "Sudah penuh ✨",
     };
   }
 
   return {
     wrapper:
-      "border-[var(--border-soft)] bg-[linear-gradient(150deg,rgba(232,168,87,0.12),rgba(143,184,150,0.08))]",
+      "border-[var(--border-soft)] bg-[linear-gradient(150deg,rgba(var(--overlay-glow-primary),0.20),rgba(var(--overlay-glow-secondary),0.14))]",
     bar: "bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))]",
-    badge: "bg-[rgba(232,168,87,0.14)] text-[var(--text-primary)]",
+    badge: "bg-[var(--accent-surface)] text-[var(--text-primary)]",
     label: "Masih jalan pelan-pelan",
   };
 }
@@ -49,55 +49,51 @@ export function SavingGoalCard({
   return (
     <button
       className={[
-        "w-full rounded-[28px] border p-5 text-left shadow-[var(--shadow-card)] transition-transform duration-150 active:scale-[0.99]",
+        "w-full rounded-[20px] border p-3.5 text-left shadow-[var(--shadow-card)] transition-transform duration-150 active:scale-[0.99]",
         tone.wrapper,
       ].join(" ")}
       onClick={onClick}
       type="button"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 space-y-3">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[rgba(255,243,220,0.12)] text-2xl">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex items-start gap-2.5">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--bg-card-soft)] text-xl">
               {goal.icon}
             </span>
-            <div className="min-w-0 space-y-1">
-              <p className="truncate text-base font-bold text-[var(--text-primary)]">
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="truncate text-[14px] font-bold text-[var(--text-primary)]">
                 {goal.title}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <span
                   className={[
-                    "rounded-full px-3 py-1 text-[11px] font-semibold",
+                    "rounded-full px-2 py-0.5 text-[10px] font-semibold",
                     tone.badge,
                   ].join(" ")}
                 >
                   {tone.label}
                 </span>
-                {goal.deadline ? (
-                  <span className="text-xs text-[var(--text-muted)]">
-                    Deadline {formatDateLabel(goal.deadline)}
-                  </span>
-                ) : (
-                  <span className="text-xs text-[var(--text-muted)]">
-                    Tanpa deadline dulu
-                  </span>
-                )}
+                <span className="text-[10px] text-[var(--text-muted)]">
+                  {goal.deadline
+                    ? `Deadline ${formatDateLabel(goal.deadline)}`
+                    : "Tanpa deadline"}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-end justify-between gap-3">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
+          <div className="space-y-1">
+            <div className="flex items-end justify-between gap-2">
+              <p className="text-[12px] font-semibold text-[var(--text-primary)]">
                 {formatCurrency(progress.savedAmount)} /{" "}
                 {formatCurrency(progress.targetAmount)}
               </p>
-              <p className="text-sm font-bold text-[var(--text-primary)]">
+              <p className="text-[12px] font-bold text-[var(--text-primary)]">
                 {Math.round(progress.percentage * 100)}%
               </p>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-[rgba(255,243,220,0.08)]">
+            <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-card-soft)]">
               <div
                 className={["h-full rounded-full", tone.bar].join(" ")}
                 style={{ width: progressWidth }}
@@ -107,13 +103,13 @@ export function SavingGoalCard({
         </div>
 
         <div className="shrink-0 text-right">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
             Sisa
           </p>
-          <p className="mt-2 text-sm font-bold text-[var(--text-primary)]">
+          <p className="mt-0.5 text-[12px] font-bold text-[var(--text-primary)]">
             {formatCurrency(progress.remainingAmount)}
           </p>
-          <p className="mt-3 text-xs text-[var(--text-muted)]">Lihat detail</p>
+          <p className="mt-1.5 text-[10px] text-[var(--text-muted)]">Lihat</p>
         </div>
       </div>
     </button>

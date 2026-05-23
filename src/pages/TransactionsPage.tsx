@@ -34,12 +34,12 @@ function FilterSelect({
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <label className="flex flex-col gap-2" htmlFor={inputId}>
-      <span className="text-sm font-semibold text-[var(--text-secondary)]">
+    <label className="flex flex-col gap-1" htmlFor={inputId}>
+      <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
         {label}
       </span>
       <select
-        className="min-h-14 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent-primary)]"
+        className="min-h-12 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent-primary)]"
         id={inputId}
         onChange={(event) => onChange(event.target.value)}
         value={value}
@@ -160,26 +160,26 @@ export function TransactionsPage() {
       description="Lebih rapi dan fokus supaya catatanmu gampang dicari, disaring, lalu diedit kalau perlu."
     >
       <Card title="Cari dan saring">
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Input
             label="Cari detail"
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Misal: kopi, bensin, album"
             value={query}
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-2">
             <FilterSelect
               label="Kategori"
               onChange={setSelectedCategory}
               options={CATEGORY_TYPES}
-              placeholder="Semua kategori"
+              placeholder="Semua"
               value={selectedCategory}
             />
             <FilterSelect
               label="Akun"
               onChange={setSelectedAccount}
               options={ACCOUNT_TYPES}
-              placeholder="Semua akun"
+              placeholder="Semua"
               value={selectedAccount}
             />
           </div>
@@ -195,22 +195,22 @@ export function TransactionsPage() {
 
       <Card
         title="Ringkasan hasil"
-        subtitle="Daftar ini menampilkan semua transaksi yang sudah tersimpan di perangkatmu."
+        subtitle="Daftar ini menampilkan semua transaksi tersimpan di perangkatmu."
       >
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-3xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
               Total transaksi
             </p>
-            <p className="mt-2 text-lg font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {filteredItems.length}
             </p>
           </div>
-          <div className="rounded-3xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
               Total nominal
             </p>
-            <p className="mt-2 text-lg font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {formatCurrency(filteredTotal)}
             </p>
           </div>
@@ -222,62 +222,62 @@ export function TransactionsPage() {
         subtitle={
           filteredItems.length > 0
             ? "Tap salah satu transaksi untuk lihat detail, edit, atau hapus."
-            : "Coba longgarkan pencarian atau mulai catat transaksi baru dari sini."
+            : "Coba longgarkan pencarian atau mulai catat transaksi baru."
         }
       >
         {isLoadingAll ? (
-          <p className="text-sm leading-6 text-[var(--text-secondary)]">
+          <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
             Lagi memuat catatanmu sebentar ya...
           </p>
         ) : error ? (
-          <p className="text-sm leading-6 text-[var(--danger-soft)]">{error}</p>
+          <p className="text-[12px] leading-5 text-[var(--danger-soft)]">{error}</p>
         ) : filteredItems.length > 0 ? (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {groupedItems.map((group) => (
-              <section key={group.month} className="space-y-3">
-                <div className="flex items-end justify-between gap-3">
+              <section key={group.month} className="space-y-2">
+                <div className="flex items-end justify-between gap-2">
                   <div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
                       {formatMonthLabel(group.month)}
                     </h2>
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
                       {group.items.length} transaksi · {formatCurrency(group.total)}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {group.items.map((transaction) => (
                     <button
                       key={transaction.id}
-                      className="flex w-full items-start justify-between gap-3 rounded-3xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4 text-left transition-colors hover:border-[var(--accent-primary)]"
+                      className="flex w-full items-start justify-between gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3 text-left transition-colors hover:border-[var(--accent-primary)]"
                       onClick={() => setSelectedTransactionId(transaction.id)}
                       type="button"
                     >
-                      <div className="min-w-0 space-y-2">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="font-semibold text-[var(--text-primary)]">
+                      <div className="min-w-0 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
                             {transaction.detail}
                           </p>
-                          <span className="rounded-full bg-[rgba(232,168,87,0.14)] px-2.5 py-1 text-xs font-semibold text-[var(--text-secondary)]">
+                          <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent-primary)]">
                             {transaction.category}
                           </span>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-[11px] text-[var(--text-secondary)]">
                           {transaction.account}
                           {transaction.mood ? ` · ${transaction.mood}` : ""}
                         </p>
-                        <p className="text-xs text-[var(--text-muted)]">
+                        <p className="text-[10px] text-[var(--text-muted)]">
                           {formatDateLabel(transaction.date)}
                           {transaction.note ? ` · ${transaction.note}` : ""}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="text-sm font-bold text-[var(--text-primary)]">
+                        <p className="text-[13px] font-bold text-[var(--text-primary)]">
                           {formatCurrency(transaction.nominal)}
                         </p>
-                        <p className="mt-2 text-xs text-[var(--text-muted)]">
-                          Lihat detail
+                        <p className="mt-1 text-[10px] text-[var(--text-muted)]">
+                          Lihat
                         </p>
                       </div>
                     </button>
@@ -287,10 +287,9 @@ export function TransactionsPage() {
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
-            <p className="text-sm leading-6 text-[var(--text-secondary)]">
-              Belum ada transaksi yang pas dengan filter ini. Mau catat transaksi
-              baru dulu?
+          <div className="space-y-3">
+            <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+              Belum ada transaksi yang pas. Mau catat transaksi baru dulu?
             </p>
             <Button fullWidth onClick={() => openBottomSheet("add-transaction")}>
               Tambah Transaksi

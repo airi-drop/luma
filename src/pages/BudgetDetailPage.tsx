@@ -117,25 +117,25 @@ export function BudgetDetailPage() {
         </button>
       }
     >
-      <Card className="overflow-hidden bg-[linear-gradient(150deg,rgba(232,168,87,0.22),rgba(143,184,150,0.12))]">
+      <Card className="overflow-hidden bg-[linear-gradient(150deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.16))]">
         {monthlyBudget && budgetUsage ? (
-          <div className="space-y-5">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-secondary)]">
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 space-y-1">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
                   Total budget
                 </p>
-                <p className="font-display text-[38px] leading-none font-bold text-[var(--text-primary)]">
+                <p className="truncate font-display text-[24px] leading-tight font-bold text-[var(--text-primary)]">
                   {formatCurrency(monthlyBudget.totalBudget)}
                 </p>
-                <p className="text-sm leading-6 text-[var(--text-secondary)]">
+                <p className="line-clamp-2 text-[12px] leading-5 text-[var(--text-secondary)]">
                   {budgetUsage.remaining >= 0
                     ? `Masih ada ${formatCurrency(budgetUsage.remaining)} buat sisa bulan ini.`
                     : `Sudah lewat ${formatCurrency(Math.abs(budgetUsage.remaining))} dari batas bulan ini.`}
                 </p>
               </div>
               <button
-                className="inline-flex min-h-11 items-center rounded-full border border-[var(--border-soft)] bg-[rgba(26,20,16,0.2)] px-4 text-sm font-semibold text-[var(--text-primary)]"
+                className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3 text-[12px] font-semibold text-[var(--text-primary)]"
                 onClick={openMonthlySheet}
                 type="button"
               >
@@ -143,27 +143,27 @@ export function BudgetDetailPage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
                   Terpakai
                 </p>
-                <p className="mt-2 text-sm font-bold text-[var(--text-primary)]">
+                <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
                   {formatCurrency(budgetUsage.used)}
                 </p>
               </div>
-              <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+              <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
                   Sisa
                 </p>
-                <p className="mt-2 text-sm font-bold text-[var(--text-primary)]">
+                <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
                   {formatCurrency(budgetUsage.remaining)}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-3 text-sm">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-2 text-[12px]">
                 <span className="text-[var(--text-secondary)]">Progress bulanan</span>
                 <span className="font-semibold text-[var(--text-primary)]">
                   {Math.round(budgetUsage.percentage * 100)}%
