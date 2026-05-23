@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
+import {
+  getCharacterById,
+  getCharacterCompanionLine,
+} from "../../features/customization/presets";
 import { formatMonthLabel } from "../../lib/date";
 import {
   formatInsightUsage,
@@ -21,12 +25,14 @@ interface AIReflectionCardProps {
   month: string;
   transactions: Transaction[];
   aiEnabled: boolean;
+  activeCharacterId?: string;
 }
 
 export function AIReflectionCard({
   month,
   transactions,
   aiEnabled,
+  activeCharacterId,
 }: AIReflectionCardProps) {
   const [state, setState] = useState<InsightPreparationResult | { status: "loading"; usageCount: number; limit: number }>({
     status: "loading",
@@ -100,17 +106,30 @@ export function AIReflectionCard({
 
   const usageCount = state.usageCount;
   const limit = state.limit;
+  const activeCharacter = getCharacterById(activeCharacterId);
+  const companionLine =
+    getCharacterCompanionLine(activeCharacterId, "reflection") ??
+    "Luma bantu baca polanya pelan-pelan biar tetap terasa ringan.";
 
   return (
     <Card
       title="Refleksi AI"
-      subtitle={`Bacaan pola halus untuk ${formatMonthLabel(month).toLowerCase()} tanpa kirim histori mentah penuh.`}
+      subtitle={`Bacaan pola halus untuk ${formatMonthLabel(month).toLowerCase()} tanpa bikin halaman ini terasa berat.`}
       className="bg-[linear-gradient(160deg,rgba(var(--overlay-glow-primary),0.16),rgba(var(--overlay-glow-secondary),0.10))]"
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
           <span>Refleksi perilaku</span>
           <span>{formatInsightUsage(usageCount, limit)}</span>
+        </div>
+
+        <div className="rounded-[18px] border border-[var(--border-soft)] bg-[rgba(255,243,220,0.06)] px-3.5 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            {activeCharacter.name} lagi nemenin
+          </p>
+          <p className="mt-1 text-[12px] leading-5 text-[var(--text-secondary)]">
+            {companionLine}
+          </p>
         </div>
 
         {state.status === "success" ? (

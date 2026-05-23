@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SavingGoalCard } from "../components/cards/SavingGoalCard";
 import { GoalDetailSheet } from "../components/sheets/GoalDetailSheet";
 import { CreateGoalSheet } from "../components/sheets/CreateGoalSheet";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { IconBadge } from "../components/ui/IconBadge";
 import { formatCurrency } from "../lib/currency";
 import { useSavingGoalsStore } from "../stores/saving-goals.store";
 import { useUiStore } from "../stores/ui.store";
@@ -59,19 +60,21 @@ export function TargetPage() {
     }
   }
 
+  useEffect(() => {
+    function handleCreateGoalRequest() {
+      setIsCreateOpen(true);
+    }
+
+    window.addEventListener("luma:create-goal", handleCreateGoalRequest);
+    return () => {
+      window.removeEventListener("luma:create-goal", handleCreateGoalRequest);
+    };
+  }, []);
+
   return (
     <PageWrapper
       title="Target"
       description="Ruang kecil buat nyimpen mimpi yang lagi kamu tabung, tanpa rasa kaku kayak rekening bank."
-      headerAction={
-        <button
-          className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
-          onClick={() => setIsCreateOpen(true)}
-          type="button"
-        >
-          + Buat
-        </button>
-      }
     >
       <Card className="overflow-hidden bg-[linear-gradient(155deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.16))]">
         <div className="flex items-start justify-between gap-3">
@@ -90,9 +93,7 @@ export function TargetPage() {
                 : "Mulai dari satu target kecil dulu juga boleh."}
             </p>
           </div>
-          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-surface)] text-xl">
-            🎯
-          </span>
+          <IconBadge icon="🎯" size="md" tone="accent" />
         </div>
 
         <div className="mt-3 grid grid-cols-2 gap-2">

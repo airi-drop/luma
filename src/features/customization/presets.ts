@@ -323,6 +323,25 @@ export const CHARACTER_PRESETS: CharacterConfig[] = [
   },
 ];
 
+const CHARACTER_COMPANION_COPY = {
+  otter: {
+    transactionsEmpty: "Pelan-pelan aja, satu catatan kecil juga sudah bikin space ini hidup.",
+    reflection: "Aku bantu lihat polanya pelan-pelan, biar tetap kebaca tanpa bikin sumpek.",
+  },
+  cat: {
+    transactionsEmpty: "Kalau mulai dari satu transaksi dulu, nanti catatannya jadi lebih gampang dirapihin.",
+    reflection: "Aku bantu rapihin garis besarnya dulu, jadi bacaan bulan ini tetap terasa ringan.",
+  },
+  bunny: {
+    transactionsEmpty: "Transaksi kecil hari ini juga tetap berarti buat cerita uangmu.",
+    reflection: "Kita lihat pelan-pelan ya, biar pola bulan ini kebaca tanpa terasa berat.",
+  },
+  hamster: {
+    transactionsEmpty: "Sedikit-sedikit juga tetap ngumpul, apalagi kalau mulai dicatat dari sekarang.",
+    reflection: "Aku bantu kumpulin petunjuk kecilnya dulu, baru kita baca polanya bareng.",
+  },
+} as const;
+
 export const DEFAULT_CUSTOMIZATION: Pick<
   UserSettings,
   | "activeThemeId"
@@ -347,4 +366,14 @@ export function getCharacterById(characterId?: string) {
     CHARACTER_PRESETS.find((character) => character.id === characterId) ??
     CHARACTER_PRESETS[0]
   );
+}
+
+export function getCharacterCompanionLine(
+  characterId: string | undefined,
+  context: "transactionsEmpty" | "reflection",
+) {
+  const activeCharacter = getCharacterById(characterId);
+  return CHARACTER_COMPANION_COPY[
+    activeCharacter.id as keyof typeof CHARACTER_COMPANION_COPY
+  ]?.[context];
 }

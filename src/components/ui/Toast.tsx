@@ -36,10 +36,13 @@ export function Toast() {
   return (
     <div className="pointer-events-none fixed inset-x-0 top-4 z-50 px-4">
       <div
+        aria-atomic="true"
+        aria-live="polite"
         className={[
           "mx-auto w-full max-w-[480px] rounded-[24px] border px-4 py-3 shadow-[var(--shadow-card)] backdrop-blur",
           toneClasses[toast.tone ?? "info"],
         ].join(" ")}
+        role="status"
       >
         <p className="text-sm font-semibold">{toast.message}</p>
       </div>

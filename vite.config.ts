@@ -48,9 +48,9 @@ export default defineConfig(({ mode }) => {
       registerType: "autoUpdate",
       includeAssets: [
         "favicon.svg",
-        "icons/icon-192.svg",
-        "icons/icon-512.svg",
-        "icons/icon-maskable.svg",
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon-maskable-512.png",
       ],
       manifest: {
         id: "/",
@@ -67,21 +67,21 @@ export default defineConfig(({ mode }) => {
         categories: ["finance", "lifestyle"],
         icons: [
           {
-            src: "/icons/icon-192.svg",
+            src: "/icons/icon-192.png",
             sizes: "192x192",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/icon-512.svg",
+            src: "/icons/icon-512.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icons/icon-maskable.svg",
+            src: "/icons/icon-maskable-512.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "maskable",
           },
         ],

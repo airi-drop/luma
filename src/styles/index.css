@@ -9,6 +9,36 @@
 :root {
   color-scheme: light;
 
+  /* Typography scale */
+  --font-size-page-title: clamp(2.4rem, 8vw, 3.2rem);
+  --font-size-section-title: 1.35rem;
+  --font-size-card-title: 1.05rem;
+  --font-size-body: 0.95rem;
+  --font-size-caption: 0.78rem;
+  --font-size-label: 0.72rem;
+
+  --line-height-tight: 1.05;
+  --line-height-normal: 1.45;
+  --line-height-relaxed: 1.65;
+
+  --letter-spacing-label: 0.12em;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Radius tokens used by shared primitives */
+  --radius-card-roomy: 1.75rem;
+  --radius-card-compact: 1.375rem;
+  --radius-field: 1rem;
+
   /* Page surfaces — soft cream / pale peach */
   --bg-main: #fff5ec;
   --bg-card: rgba(255, 255, 255, 0.92);
@@ -87,6 +117,8 @@ body {
   margin: 0;
   min-width: 320px;
   font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
   background: var(--bg-main);
   color: var(--text-primary);
 }
@@ -124,6 +156,40 @@ textarea,
 
 #root {
   min-height: 100dvh;
+}
+
+.ui-page-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-page-title);
+  line-height: var(--line-height-tight);
+  font-weight: 700;
+}
+
+.ui-section-title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-section-title);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.ui-card-title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-card-title);
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.ui-label {
+  font-size: var(--font-size-label);
+  line-height: 1.2;
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
+}
+
+.ui-helper {
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.66;
 }
 
 @media (prefers-reduced-motion: reduce) {

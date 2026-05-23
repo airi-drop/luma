@@ -16,7 +16,7 @@ export function CharacterCustomizer({
     <div className="space-y-3">
       <div className="space-y-0.5">
         <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
-          Karakter bawaan ini placeholder, cukup buat nentuin teman kecil di Home.
+          Pilih teman kecil yang mau nemenin empty state, refleksi, dan beberapa momen lembut di Luma.
         </p>
         <p className="text-[10px] leading-4 text-[var(--text-muted)]">
           Aktif: {activeCharacter.name}
@@ -40,7 +40,7 @@ export function CharacterCustomizer({
               ].join(" ")}
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] font-display text-[13px] font-bold text-[var(--text-primary)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[18px] border border-[var(--border-soft)] bg-[linear-gradient(160deg,rgba(255,255,255,0.14),rgba(var(--overlay-glow-primary),0.14))] font-display text-[13px] font-bold text-[var(--text-primary)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
                   {character.name.slice(0, 2).toUpperCase()}
                 </div>
                 <span
@@ -60,7 +60,7 @@ export function CharacterCustomizer({
                   {character.name}
                 </p>
                 <p className="line-clamp-2 text-[11px] leading-4 text-[var(--text-secondary)]">
-                  {character.assetMap.happy}
+                  {character.assetMap.chill}
                 </p>
               </div>
             </button>

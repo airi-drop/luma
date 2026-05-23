@@ -4,8 +4,13 @@ import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
+import {
+  getCharacterById,
+  getCharacterCompanionLine,
+} from "../features/customization/presets";
 import { formatCurrency } from "../lib/currency";
 import { formatDateLabel, formatMonthLabel } from "../lib/date";
+import { useSettingsStore } from "../stores/settings.store";
 import { useTransactionsStore } from "../stores/transactions.store";
 import { useUiStore } from "../stores/ui.store";
 import {
@@ -34,12 +39,16 @@ function FilterSelect({
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <label className="flex flex-col gap-1" htmlFor={inputId}>
-      <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
+    <label
+      className="flex flex-col"
+      htmlFor={inputId}
+      style={{ gap: "var(--space-2)" }}
+    >
+      <span className="ui-label font-semibold text-[var(--text-secondary)]">
         {label}
       </span>
       <select
-        className="min-h-12 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent-primary)]"
+        className="min-h-11 rounded-[var(--radius-field)] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3 text-[12px] text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--accent-primary)]"
         id={inputId}
         onChange={(event) => onChange(event.target.value)}
         value={value}
@@ -114,6 +123,7 @@ function groupTransactionsByMonth(
 
 export function TransactionsPage() {
   const openBottomSheet = useUiStore((state) => state.openBottomSheet);
+  const settings = useSettingsStore((state) => state.settings);
   const loadAll = useTransactionsStore((state) => state.loadAll);
   const allItems = useTransactionsStore((state) => state.allItems);
   const isLoadingAll = useTransactionsStore((state) => state.isLoadingAll);
@@ -153,6 +163,10 @@ export function TransactionsPage() {
     (sum, transaction) => sum + transaction.nominal,
     0,
   );
+  const activeCharacter = getCharacterById(settings?.activeCharacterId);
+  const emptyStateLine =
+    getCharacterCompanionLine(settings?.activeCharacterId, "transactionsEmpty") ??
+    "Belum ada transaksi yang pas. Mau mulai dari satu catatan kecil dulu?";
 
   return (
     <PageWrapper
@@ -160,7 +174,7 @@ export function TransactionsPage() {
       description="Lebih rapi dan fokus supaya catatanmu gampang dicari, disaring, lalu diedit kalau perlu."
     >
       <Card title="Cari dan saring">
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <Input
             label="Cari detail"
             onChange={(event) => setQuery(event.target.value)}
@@ -198,19 +212,19 @@ export function TransactionsPage() {
         subtitle="Daftar ini menampilkan semua transaksi tersimpan di perangkatmu."
       >
         <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+          <div className="rounded-[18px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-2.5">
+            <p className="ui-label font-semibold text-[var(--text-muted)]">
               Total transaksi
             </p>
-            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[14px] font-bold text-[var(--text-primary)]">
               {filteredItems.length}
             </p>
           </div>
-          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+          <div className="rounded-[18px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-2.5">
+            <p className="ui-label font-semibold text-[var(--text-muted)]">
               Total nominal
             </p>
-            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[14px] font-bold text-[var(--text-primary)]">
               {formatCurrency(filteredTotal)}
             </p>
           </div>
@@ -232,53 +246,54 @@ export function TransactionsPage() {
         ) : error ? (
           <p className="text-[12px] leading-5 text-[var(--danger-soft)]">{error}</p>
         ) : filteredItems.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {groupedItems.map((group) => (
-              <section key={group.month} className="space-y-2">
+              <section key={group.month} className="space-y-1.5">
                 <div className="flex items-end justify-between gap-2">
                   <div>
-                    <h2 className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+                    <h2 className="ui-label font-bold text-[var(--text-secondary)]">
                       {formatMonthLabel(group.month)}
                     </h2>
-                    <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
-                      {group.items.length} transaksi · {formatCurrency(group.total)}
+                    <p className="ui-helper mt-0.5 text-[var(--text-muted)]">
+                      {group.items.length} transaksi - {formatCurrency(group.total)}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {group.items.map((transaction) => (
                     <button
                       key={transaction.id}
-                      className="flex w-full items-start justify-between gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3 text-left transition-colors hover:border-[var(--accent-primary)]"
+                      className="flex w-full items-start justify-between gap-3 rounded-[18px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3 py-2.5 text-left transition-colors hover:border-[var(--accent-primary)]"
                       onClick={() => setSelectedTransactionId(transaction.id)}
                       type="button"
                     >
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
-                            {transaction.detail}
-                          </p>
-                          <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent-primary)]">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
+                          {transaction.detail}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-[var(--text-secondary)]">
+                          <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[9px] font-semibold text-[var(--accent-primary)]">
                             {transaction.category}
                           </span>
+                          <span>{transaction.account}</span>
+                          {transaction.mood ? <span>{transaction.mood}</span> : null}
                         </div>
-                        <p className="text-[11px] text-[var(--text-secondary)]">
-                          {transaction.account}
-                          {transaction.mood ? ` · ${transaction.mood}` : ""}
-                        </p>
                         <p className="text-[10px] text-[var(--text-muted)]">
                           {formatDateLabel(transaction.date)}
-                          {transaction.note ? ` · ${transaction.note}` : ""}
+                          {transaction.note ? ` - ${transaction.note}` : ""}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="text-[13px] font-bold text-[var(--text-primary)]">
+                        <p className="text-[14px] font-bold text-[var(--text-primary)]">
                           {formatCurrency(transaction.nominal)}
                         </p>
-                        <p className="mt-1 text-[10px] text-[var(--text-muted)]">
-                          Lihat
-                        </p>
+                        <span
+                          aria-hidden="true"
+                          className="mt-1 inline-flex text-[11px] text-[var(--text-muted)]"
+                        >
+                          ›
+                        </span>
                       </div>
                     </button>
                   ))}
@@ -289,7 +304,10 @@ export function TransactionsPage() {
         ) : (
           <div className="space-y-3">
             <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
-              Belum ada transaksi yang pas. Mau catat transaksi baru dulu?
+              {emptyStateLine}
+            </p>
+            <p className="text-[10px] leading-4 text-[var(--text-muted)]">
+              {activeCharacter.name} siap nemenin kalau kamu mau mulai dari satu transaksi dulu.
             </p>
             <Button fullWidth onClick={() => openBottomSheet("add-transaction")}>
               Tambah Transaksi
