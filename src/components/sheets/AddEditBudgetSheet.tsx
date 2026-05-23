@@ -127,17 +127,17 @@ function BudgetSheetForm({
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-3" onSubmit={handleSubmit}>
       {mode === "category" ? (
-        <label className="flex w-full flex-col gap-2" htmlFor="budget-category">
-          <span className="text-sm font-semibold text-[var(--text-secondary)]">
+        <label className="flex w-full flex-col gap-1" htmlFor="budget-category">
+          <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
             Kategori
           </span>
           <select
             className={[
-              "min-h-14 rounded-2xl border bg-[var(--bg-card-soft)] px-4 text-sm text-[var(--text-primary)] outline-none transition-colors",
+              "min-h-12 rounded-xl border bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors",
               categoryError
-                ? "border-[rgba(217,108,95,0.4)]"
+                ? "border-[var(--danger-soft)]"
                 : "border-[var(--border-soft)] focus:border-[var(--accent-primary)]",
             ].join(" ")}
             disabled={isEditingCategory}
@@ -154,11 +154,11 @@ function BudgetSheetForm({
             ))}
           </select>
           {categoryError ? (
-            <span className="text-xs leading-5 text-[var(--danger-soft)]">
+            <span className="text-[10px] leading-4 text-[var(--danger-soft)]">
               {categoryError}
             </span>
           ) : (
-            <span className="text-xs leading-5 text-[var(--text-muted)]">
+            <span className="text-[10px] leading-4 text-[var(--text-muted)]">
               {isEditingCategory
                 ? "Kategori ini lagi diedit, jadi namanya tetap ya."
                 : "Pilih kategori yang mau kamu jagain dulu."}
@@ -187,7 +187,7 @@ function BudgetSheetForm({
       />
 
       {mode === "category" && categoryTouched && category && !isCategoryType(category) ? (
-        <p className="text-xs leading-5 text-[var(--danger-soft)]">
+        <p className="text-[10px] leading-4 text-[var(--danger-soft)]">
           Kategori nggak valid.
         </p>
       ) : null}

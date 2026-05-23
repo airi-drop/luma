@@ -104,7 +104,7 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form className="space-y-3" onSubmit={handleSubmit}>
       <Input
         error={titleError}
         hint={titleError ? undefined : "Contoh: Album IU, Trip Jepang, Laptop baru."}
@@ -115,15 +115,15 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
         value={title}
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2">
         <Input
           error={targetAmountError}
           hint={
             targetAmountError
               ? undefined
               : targetAmount > 0
-                ? `Targetnya ${formatCurrency(targetAmount)}`
-                : "Tulis total yang pengen dicapai."
+                ? `Target ${formatCurrency(targetAmount)}`
+                : "Total yang pengen dicapai."
           }
           inputMode="numeric"
           label="Target nominal"
@@ -141,8 +141,8 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
             currentAmountError
               ? undefined
               : currentAmount > 0
-                ? `Mulai dari ${formatCurrency(currentAmount)}`
-                : "Boleh dikosongkan kalau mau mulai dari nol."
+                ? `Mulai ${formatCurrency(currentAmount)}`
+                : "Boleh kosong, mulai dari nol."
           }
           inputMode="numeric"
           label="Tabungan awal"
@@ -158,7 +158,7 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
       <div className="space-y-2">
         <Input
           error={iconError}
-          hint={iconError ? undefined : "Satu emoji kecil cukup biar targetnya gampang dikenali."}
+          hint={iconError ? undefined : "Satu emoji kecil cukup biar gampang dikenali."}
           label="Emoji / icon"
           maxLength={4}
           onBlur={() => setTouched((state) => ({ ...state, icon: true }))}
@@ -166,12 +166,12 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
           placeholder="🎧"
           value={icon}
         />
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {iconSuggestions.map((suggestion) => (
             <button
               key={suggestion}
               className={[
-                "inline-flex h-11 w-11 items-center justify-center rounded-full border text-xl",
+                "inline-flex h-9 w-9 items-center justify-center rounded-full border text-base",
                 icon === suggestion
                   ? "border-[var(--accent-primary)] bg-[var(--accent-surface)]"
                   : "border-[var(--border-soft)] bg-[var(--bg-card-soft)]",
@@ -186,26 +186,26 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
       </div>
 
       <Input
-        hint="Opsional. Kalau belum pengen ditentuin, boleh kosong."
+        hint="Opsional. Boleh kosong kalau belum ditentuin."
         label="Deadline"
         onChange={(event) => setDeadline(event.target.value)}
         type="date"
         value={deadline}
       />
 
-      <label className="flex flex-col gap-2" htmlFor="goal-note">
-        <span className="text-sm font-semibold text-[var(--text-secondary)]">
+      <label className="flex flex-col gap-1" htmlFor="goal-note">
+        <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
           Catatan kecil
         </span>
         <textarea
-          className="min-h-28 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
+          className="min-h-20 rounded-xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3.5 py-2.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--accent-primary)]"
           id="goal-note"
           onChange={(event) => setNote(event.target.value)}
           placeholder="Misal: pengen selesai sebelum akhir tahun."
           value={note}
         />
-        <span className="text-xs leading-5 text-[var(--text-muted)]">
-          Opsional, buat ninggalin alasan kecil kenapa target ini penting.
+        <span className="text-[10px] leading-4 text-[var(--text-muted)]">
+          Opsional, alasan kecil kenapa target ini penting.
         </span>
       </label>
 

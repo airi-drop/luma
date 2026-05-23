@@ -65,7 +65,7 @@ export function TargetPage() {
       description="Ruang kecil buat nyimpen mimpi yang lagi kamu tabung, tanpa rasa kaku kayak rekening bank."
       headerAction={
         <button
-          className="inline-flex min-h-11 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-4 text-sm font-semibold text-[var(--text-secondary)]"
+          className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
           onClick={() => setIsCreateOpen(true)}
           type="button"
         >
@@ -73,42 +73,42 @@ export function TargetPage() {
         </button>
       }
     >
-      <Card className="overflow-hidden bg-[linear-gradient(155deg,rgba(232,168,87,0.18),rgba(143,184,150,0.12))]">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-secondary)]">
+      <Card className="overflow-hidden bg-[linear-gradient(155deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.16))]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 space-y-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
               Ruang tabungan
             </p>
-            <h2 className="font-display text-[32px] leading-tight font-bold text-[var(--text-primary)]">
+            <h2 className="font-display text-[20px] leading-tight font-bold text-[var(--text-primary)]">
               {activeGoals.length > 0
                 ? `${activeGoals.length} target lagi jalan`
                 : "Belum ada target aktif"}
             </h2>
-            <p className="max-w-[30ch] text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="line-clamp-2 max-w-[30ch] text-[12px] leading-5 text-[var(--text-secondary)]">
               {activeGoals.length > 0
-                ? "Sedikit demi sedikit juga tetap gerak. Semua progresnya kebaca dari sini."
-                : "Ada sesuatu yang lagi kamu pengen wujudkan? Mulai dari satu target kecil dulu juga boleh."}
+                ? "Sedikit demi sedikit juga tetap gerak."
+                : "Mulai dari satu target kecil dulu juga boleh."}
             </p>
           </div>
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(255,243,220,0.14)] text-3xl">
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-surface)] text-xl">
             🎯
           </span>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
               Terkumpul
             </p>
-            <p className="mt-2 text-sm font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {formatCurrency(totalSaved)}
             </p>
           </div>
-          <div className="rounded-[22px] border border-[rgba(255,243,220,0.12)] bg-[rgba(26,20,16,0.18)] p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-secondary)]">
               Total target
             </p>
-            <p className="mt-2 text-sm font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {formatCurrency(totalTarget)}
             </p>
           </div>
@@ -126,13 +126,13 @@ export function TargetPage() {
         }
       >
         {isLoading ? (
-          <p className="text-sm leading-6 text-[var(--text-secondary)]">
+          <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
             Lagi nyiapin daftar targetmu sebentar ya...
           </p>
         ) : error ? (
-          <p className="text-sm leading-6 text-[var(--danger-soft)]">{error}</p>
+          <p className="text-[12px] leading-5 text-[var(--danger-soft)]">{error}</p>
         ) : activeGoals.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {activeGoals.map(({ goal, progress }) => (
               <SavingGoalCard
                 key={goal.id}
@@ -143,8 +143,8 @@ export function TargetPage() {
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
-            <p className="text-sm leading-6 text-[var(--text-secondary)]">
+          <div className="space-y-3">
+            <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
               Ada sesuatu yang lagi kamu pengen wujudkan?
             </p>
             <Button fullWidth onClick={() => setIsCreateOpen(true)}>
@@ -157,9 +157,9 @@ export function TargetPage() {
       {completedGoals.length > 0 ? (
         <Card
           title="Sudah selesai"
-          subtitle="Yang ini sudah berhasil sampai. Tetap bisa dibuka lagi kalau mau lihat detailnya."
+          subtitle="Bisa dibuka lagi kapan aja kalau mau lihat detailnya."
         >
-          <div className="space-y-4">
+          <div className="space-y-3">
             {completedGoals.map(({ goal, progress }) => (
               <SavingGoalCard
                 key={goal.id}
@@ -175,9 +175,9 @@ export function TargetPage() {
       {archivedGoals.length > 0 ? (
         <Card
           title="Arsip target"
-          subtitle="Target yang lagi diistirahatin sebentar tetap aman tersimpan."
+          subtitle="Target yang lagi diistirahatin sebentar tetap aman."
         >
-          <div className="space-y-4">
+          <div className="space-y-3">
             {archivedGoals.map(({ goal, progress }) => (
               <SavingGoalCard
                 key={goal.id}

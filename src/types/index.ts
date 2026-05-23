@@ -160,6 +160,8 @@ export interface UserSettings {
   updatedAt: string;
 }
 
+export type AIProvider = "gemini" | "openai" | "openrouter";
+
 export type UpdateUserSettingsInput = Partial<
   Omit<UserSettings, "id" | "createdAt" | "updatedAt">
 >;

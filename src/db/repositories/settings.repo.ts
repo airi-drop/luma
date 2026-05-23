@@ -7,7 +7,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   id: "main",
   name: "",
   currency: "IDR",
-  themeMode: "dark",
+  themeMode: "light",
   ...DEFAULT_CUSTOMIZATION,
   mascotEnabled: true,
   aiEnabled: false,

@@ -1,14 +1,33 @@
-import { useEffect, useMemo, type PropsWithChildren, type ReactNode } from "react";
+import {
+  useMemo,
+  type PropsWithChildren,
+  type ReactNode,
+} from "react";
 import { BottomNav } from "./BottomNav";
+import { BrandMark } from "../ui/BrandMark";
 import { useSettingsStore } from "../../stores/settings.store";
-import type { BackgroundAsset } from "../../types";
 
 type PageWrapperProps = PropsWithChildren<{
   title: string;
   description?: string;
   headerAction?: ReactNode;
   withBottomNav?: boolean;
+  contentClassName?: string;
+  /**
+   * Bottom padding in pixels for the scrollable content area.
+   * Must clear the floating bottom nav (~80px) and any FAB above it.
+   * Defaults to 120px.
+   */
+  bottomPadding?: number;
 }>;
+
+function useBlobObjectUrl(blob?: Blob) {
+  // Buat URL hanya saat blob benar-benar berubah. JANGAN revoke saat unmount.
+  // Revoke berisiko menghapus URL yang masih dipakai DOM ketika user pindah
+  // halaman atau ganti tema (komponen mount-unmount). Browser akan
+  // membersihkan blob URL secara otomatis saat tab ditutup.
+  return useMemo(() => (blob ? URL.createObjectURL(blob) : null), [blob]);
+}
 
 export function PageWrapper({
   children,
@@ -16,37 +35,32 @@ export function PageWrapper({
   description,
   headerAction,
   withBottomNav = true,
+  contentClassName = "space-y-4",
+  bottomPadding = 120,
 }: PageWrapperProps) {
   const settings = useSettingsStore((state) => state.settings);
-  const activeBackground = useSettingsStore((state) =>
-    state.backgrounds.find(
-      (background) => background.id === state.settings?.backgroundId,
-    ),
-  );
-  const backgroundUrl = useMemo(
-    () => (activeBackground ? URL.createObjectURL(activeBackground.blob) : null),
-    [activeBackground],
-  );
-
-  useEffect(() => {
-    return () => {
-      if (backgroundUrl) {
-        URL.revokeObjectURL(backgroundUrl);
-      }
-    };
-  }, [backgroundUrl]);
+  const backgrounds = useSettingsStore((state) => state.backgrounds);
+  const activeBackgroundId = settings?.backgroundId;
+  const activeBackground = activeBackgroundId
+    ? backgrounds.find((background) => background.id === activeBackgroundId)
+    : undefined;
+  const backgroundUrl = useBlobObjectUrl(activeBackground?.blob);
 
   const overlayOpacity = Math.min(
     88,
-    Math.max(36, settings?.backgroundOverlayOpacity ?? 72),
+    Math.max(20, settings?.backgroundOverlayOpacity ?? 60),
   );
   const blurAmount = Math.min(18, Math.max(0, settings?.backgroundBlur ?? 0));
   const blurStyle = blurAmount > 0 ? { filter: `blur(${blurAmount}px)` } : undefined;
-  const backgroundSize = getBackgroundSize(activeBackground);
+  const overlayAlpha = overlayOpacity / 100;
+  const overlayAlphaStrong = Math.min(0.92, overlayAlpha + 0.16);
 
   return (
-    <div className="min-h-dvh bg-[var(--bg-main)] text-[var(--text-primary)]">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+    <div className="min-h-dvh overflow-x-clip bg-[var(--bg-main)] text-[var(--text-primary)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      >
         {backgroundUrl ? (
           <div
             className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
@@ -62,7 +76,7 @@ export function PageWrapper({
           style={{
             background: [
               `radial-gradient(circle at top, rgba(var(--overlay-glow-primary), 0.18), transparent 42%)`,
-              `linear-gradient(180deg, rgba(var(--overlay-base-rgb), ${overlayOpacity / 100}), rgba(var(--overlay-base-rgb), ${Math.min(0.96, overlayOpacity / 100 + 0.18)}))`,
+              `linear-gradient(180deg, rgba(var(--overlay-base-rgb), ${overlayAlpha}), rgba(var(--overlay-base-rgb), ${overlayAlphaStrong}))`,
             ].join(", "),
           }}
         />
@@ -75,45 +89,33 @@ export function PageWrapper({
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col px-5 pb-28 pt-6">
-        <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
-              Luma
-            </p>
-            <div className="space-y-1">
-              <h1 className="font-display text-[28px] leading-tight font-bold">
+      <div
+        className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[480px] flex-col px-4 pt-5"
+        style={{
+          paddingBottom: `calc(env(safe-area-inset-bottom) + ${bottomPadding}px)`,
+        }}
+      >
+        <header className="mb-4 flex items-start justify-between gap-3">
+          <div className="min-w-0 space-y-1.5">
+            <BrandMark />
+            <div className="space-y-0.5">
+              <h1 className="font-display text-[26px] leading-tight font-bold">
                 {title}
               </h1>
               {description ? (
-                <p className="max-w-[32ch] text-sm leading-6 text-[var(--text-secondary)]">
+                <p className="max-w-[34ch] text-[12px] leading-5 text-[var(--text-secondary)]">
                   {description}
                 </p>
               ) : null}
             </div>
           </div>
-          {headerAction ? <div className="self-start sm:shrink-0">{headerAction}</div> : null}
+          {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
         </header>
 
-        <main className="flex-1 space-y-6">{children}</main>
-
-        {backgroundUrl ? (
-          <p className="mt-6 text-center text-xs leading-5 text-[var(--text-muted)]">
-            Background aktif {activeBackground?.name}
-            {backgroundSize ? ` • ${backgroundSize}` : ""}
-          </p>
-        ) : null}
+        <main className={["flex-1", contentClassName].join(" ")}>{children}</main>
       </div>
 
       {withBottomNav ? <BottomNav /> : null}
     </div>
   );
-}
-
-function getBackgroundSize(background?: BackgroundAsset) {
-  if (!background) {
-    return null;
-  }
-
-  return `${background.width}x${background.height}`;
 }

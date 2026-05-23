@@ -1,15 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#1A1410" />
-  <circle cx="256" cy="256" r="196" fill="url(#surface)" />
-  <circle cx="256" cy="212" r="88" fill="#E8A857" />
-  <path d="M138 338c30.5-33.6 70.7-50.5 120.7-50.5 29.7 0 56.7 5.8 81.6 17.2C327.3 345 291.2 376 247.6 376c-40 0-75.2-16.8-109.6-38Z" fill="#8FB896" />
-  <circle cx="224" cy="202" r="13" fill="#2B211A" />
-  <circle cx="286" cy="202" r="13" fill="#2B211A" />
-  <path d="M218 255c12 10.7 42 10.7 54 0" fill="none" stroke="#2B211A" stroke-linecap="round" stroke-width="14" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Luma">
   <defs>
-    <linearGradient id="surface" x1="92" x2="420" y1="72" y2="424" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#2A211B" />
-      <stop offset="1" stop-color="#342A22" />
-    </linearGradient>
+    <radialGradient id="lumaBodyMask" cx="35%" cy="35%" r="80%">
+      <stop offset="0%" stop-color="#FFD5B8" />
+      <stop offset="100%" stop-color="#F29B76" />
+    </radialGradient>
   </defs>
+  <rect width="512" height="512" fill="#FFF5EC" />
+  <circle cx="256" cy="256" r="220" fill="#F29B76" opacity="0.14" />
+  <circle cx="256" cy="256" r="160" fill="url(#lumaBodyMask)" />
+  <circle cx="318" cy="208" r="120" fill="#FFF5EC" />
+  <circle cx="120" cy="138" r="14" fill="#C5A8E8" />
 </svg>

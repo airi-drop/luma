@@ -111,28 +111,28 @@ export function TransactionDetailSheet({
       title="Detail Transaksi"
     >
       {transaction ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Card className="space-y-2 bg-[var(--bg-card-soft)]" title="Ringkasan">
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <p className="font-semibold text-[var(--text-primary)]">
+              <div className="min-w-0 space-y-0.5">
+                <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
                   {transaction.detail}
                 </p>
-                <p className="text-sm text-[var(--text-secondary)]">
+                <p className="text-[11px] text-[var(--text-secondary)]">
                   {transaction.category} · {transaction.account}
                   {transaction.mood ? ` · ${transaction.mood}` : ""}
                 </p>
               </div>
-              <p className="text-sm font-bold text-[var(--text-primary)]">
+              <p className="shrink-0 text-[13px] font-bold text-[var(--text-primary)]">
                 {formatCurrency(transaction.nominal)}
               </p>
             </div>
             {transaction.note ? (
-              <p className="text-sm leading-6 text-[var(--text-secondary)]">
+              <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
                 {transaction.note}
               </p>
             ) : (
-              <p className="text-sm leading-6 text-[var(--text-muted)]">
+              <p className="text-[12px] leading-5 text-[var(--text-muted)]">
                 Belum ada catatan tambahan di transaksi ini.
               </p>
             )}
@@ -155,24 +155,23 @@ export function TransactionDetailSheet({
           />
 
           <Card
-            className="border-[rgba(217,108,95,0.18)] bg-[rgba(217,108,95,0.08)]"
+            className="border-[rgba(232,123,123,0.22)] bg-[rgba(232,123,123,0.08)]"
             title="Hapus transaksi"
-            subtitle="Kalau catatan ini memang tidak dipakai lagi, kamu bisa hapus dari sini."
+            subtitle="Hapus catatan ini kalau memang sudah tidak dipakai."
           >
             {isConfirmingDelete ? (
-              <div className="space-y-3">
-                <p className="text-sm leading-6 text-[var(--text-secondary)]">
-                  Yakin mau hapus transaksi ini? Setelah dihapus, catatannya tidak
-                  muncul lagi di daftar.
+              <div className="space-y-2">
+                <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+                  Yakin mau hapus transaksi ini? Catatannya tidak muncul lagi setelah dihapus.
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Button
                     className="flex-1"
                     disabled={isDeleting}
                     onClick={() => setIsConfirmingDelete(false)}
                     variant="secondary"
                   >
-                    Batal dulu
+                    Batal
                   </Button>
                   <Button
                     className="flex-1 bg-[var(--danger-soft)] text-white shadow-none"

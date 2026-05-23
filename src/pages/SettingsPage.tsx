@@ -26,7 +26,7 @@ export function SettingsPage() {
         headerAction={
           <Link
             to="/home"
-            className="inline-flex min-h-11 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-4 text-sm font-semibold text-[var(--text-secondary)]"
+            className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
           >
             Kembali
           </Link>
@@ -103,7 +103,7 @@ export function SettingsPage() {
       headerAction={
         <Link
           to="/home"
-          className="inline-flex min-h-11 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-4 text-sm font-semibold text-[var(--text-secondary)]"
+          className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
         >
           Kembali
         </Link>
@@ -111,28 +111,28 @@ export function SettingsPage() {
     >
       <Card
         title="Sekarang lagi dipakai"
-        subtitle="Preview cepat biar kamu nggak perlu nebak perubahan yang sedang aktif."
+        subtitle="Preview cepat tema dan karakter aktif."
       >
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[20px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
               Theme
             </p>
-            <p className="mt-2 text-base font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {activeTheme.name}
             </p>
-            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
-              Mode {activeTheme.mode} dengan tone yang tetap aman buat baca nominal.
+            <p className="mt-0.5 text-[11px] capitalize leading-4 text-[var(--text-secondary)]">
+              Mode {activeTheme.mode}
             </p>
           </div>
-          <div className="rounded-[20px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
               Character
             </p>
-            <p className="mt-2 text-base font-bold text-[var(--text-primary)]">
+            <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
               {activeCharacter.name}
             </p>
-            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-0.5 truncate text-[11px] leading-4 text-[var(--text-secondary)]">
               {activeCharacter.assetMap.chill}
             </p>
           </div>
@@ -160,19 +160,21 @@ export function SettingsPage() {
       </Card>
 
       <Card title="Bantuan AI">
-        <div className="flex items-center justify-between gap-4 rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-[var(--text-primary)]">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+          <div className="min-w-0 space-y-0.5">
+            <p className="text-[13px] font-semibold text-[var(--text-primary)]">
               Bantuan AI
             </p>
-            <p className="text-sm leading-6 text-[var(--text-secondary)]">
-              Pakai AI buat parse teks jadi transaksi. Bisa dimatiin kapan aja.
+            <p className="text-[11px] leading-4 text-[var(--text-secondary)]">
+              Pakai AI buat parse teks jadi transaksi & refleksi bulanan.
+              Konfigurasi provider dan API key diatur di{" "}
+              <code className="font-mono">.env.local</code>.
             </p>
           </div>
           <button
             aria-pressed={settings.aiEnabled}
             className={[
-              "inline-flex min-h-11 min-w-[92px] items-center justify-center rounded-full px-4 text-sm font-bold transition-colors",
+              "inline-flex min-h-9 min-w-[72px] items-center justify-center rounded-full px-3 text-[12px] font-bold transition-colors",
               settings.aiEnabled
                 ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                 : "border border-[var(--border-soft)] bg-[var(--bg-card)] text-[var(--text-secondary)]",
@@ -186,9 +188,9 @@ export function SettingsPage() {
       </Card>
 
       <Card title="Balik ke default">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[34ch] text-sm leading-6 text-[var(--text-secondary)]">
-            Kalau mau mulai lagi dari tampilan awal, ini akan mengembalikan theme, character, background aktif, blur, dan overlay ke bawaan Luma. File background yang sudah pernah diupload tetap tersimpan.
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-[34ch] text-[12px] leading-5 text-[var(--text-secondary)]">
+            Reset theme, character, background, blur, dan overlay ke bawaan Luma. File background tetap tersimpan.
           </p>
           <Button variant="secondary" onClick={() => void handleReset()}>
             Reset tampilan

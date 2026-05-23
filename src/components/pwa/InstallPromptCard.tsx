@@ -75,7 +75,7 @@ export function InstallPromptCard() {
     <Card
       title="Pasang Luma di layar utama"
       subtitle="Biar kebuka lebih cepat, terasa kayak app beneran, dan tetap enak dipakai walau lagi offline."
-      className="bg-[linear-gradient(155deg,rgba(232,168,87,0.14),rgba(143,184,150,0.10))]"
+      className="bg-[linear-gradient(155deg,rgba(var(--overlay-glow-primary),0.20),rgba(var(--overlay-glow-secondary),0.16))]"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-[32ch] text-sm leading-6 text-[var(--text-secondary)]">

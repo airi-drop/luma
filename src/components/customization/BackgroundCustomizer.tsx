@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import type { BackgroundAsset, UserSettings } from "../../types";
-import { Button } from "../ui/Button";
 
 interface BackgroundCustomizerProps {
   settings: UserSettings;
@@ -53,17 +52,17 @@ export function BackgroundCustomizer({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <p className="text-sm leading-6 text-[var(--text-secondary)]">
-          Upload foto atau wallpaper favoritmu. Sistem akan kompres, resize maksimal 1080px, lalu simpan sebagai Blob di device ini.
+    <div className="space-y-3">
+      <div className="space-y-0.5">
+        <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+          Upload foto favorit. Otomatis di-resize maksimal 1080px lalu disimpan lokal.
         </p>
-        <p className="text-xs leading-5 text-[var(--text-muted)]">
-          Overlay tetap aktif supaya teks dan angka masih enak dibaca.
+        <p className="text-[10px] leading-4 text-[var(--text-muted)]">
+          Overlay tetap aktif supaya teks dan angka enak dibaca.
         </p>
       </div>
 
-      <label className="flex min-h-14 cursor-pointer items-center justify-center rounded-full border border-dashed border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-5 text-sm font-semibold text-[var(--text-primary)]">
+      <label className="flex min-h-12 cursor-pointer items-center justify-center rounded-full border border-dashed border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-4 text-[13px] font-semibold text-[var(--text-primary)]">
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
@@ -76,20 +75,20 @@ export function BackgroundCustomizer({
       </label>
 
       {feedback ? (
-        <p className="text-sm leading-6 text-[var(--text-secondary)]">{feedback}</p>
+        <p className="text-[11px] leading-4 text-[var(--text-secondary)]">{feedback}</p>
       ) : null}
       {error ? (
-        <p className="text-sm leading-6 text-[var(--danger-soft)]">{error}</p>
+        <p className="text-[11px] leading-4 text-[var(--danger-soft)]">{error}</p>
       ) : null}
 
-      <div className="space-y-3 rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
+      <div className="space-y-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
         <RangeControl
           label="Overlay"
           value={settings.backgroundOverlayOpacity}
-          min={36}
+          min={20}
           max={88}
           suffix="%"
-          hint="Kalau background ramai, opacity lebih tinggi biasanya lebih nyaman."
+          hint="Background ramai? Naikin opacity."
           onChange={onOverlayChange}
         />
         <RangeControl
@@ -98,40 +97,46 @@ export function BackgroundCustomizer({
           min={0}
           max={18}
           suffix="px"
-          hint="Blur tipis cukup bantu keterbacaan tanpa bikin image terasa berat."
+          hint="Blur tipis bantu keterbacaan."
           onChange={onBlurChange}
         />
       </div>
 
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-[var(--text-primary)]">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-[var(--text-primary)]">
             Koleksi background
           </p>
-          <p className="text-xs leading-5 text-[var(--text-muted)]">
+          <p className="text-[10px] leading-4 text-[var(--text-muted)]">
             {backgrounds.length > 0
               ? `${backgrounds.length} background tersimpan lokal`
-              : "Belum ada background tambahan dulu."}
+              : "Belum ada background tambahan."}
           </p>
         </div>
         {settings.backgroundId ? (
-          <Button variant="ghost" className="min-h-11 px-0" onClick={() => void onSelect(undefined)}>
+          <button
+            type="button"
+            className="shrink-0 text-[12px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            onClick={() => void onSelect(undefined)}
+          >
             Pakai default
-          </Button>
+          </button>
         ) : null}
       </div>
 
-      <div className="grid gap-3">
-        {backgrounds.map((background) => (
-          <BackgroundItem
-            key={background.id}
-            background={background}
-            active={background.id === settings.backgroundId}
-            onSelect={onSelect}
-            onRemove={onRemove}
-          />
-        ))}
-      </div>
+      {backgrounds.length > 0 ? (
+        <div className="grid grid-cols-2 gap-2">
+          {backgrounds.map((background) => (
+            <BackgroundItem
+              key={background.id}
+              background={background}
+              active={background.id === settings.backgroundId}
+              onSelect={onSelect}
+              onRemove={onRemove}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -156,12 +161,12 @@ function RangeControl({
   onChange,
 }: RangeControlProps) {
   return (
-    <label className="block space-y-2">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-[var(--text-secondary)]">
+    <label className="block space-y-1">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
           {label}
         </span>
-        <span className="text-sm font-bold text-[var(--text-primary)]">
+        <span className="text-[12px] font-bold text-[var(--text-primary)]">
           {value}
           {suffix}
         </span>
@@ -172,9 +177,9 @@ function RangeControl({
         max={max}
         value={value}
         onChange={(event) => void onChange(Number(event.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[var(--accent-surface)] accent-[var(--accent-primary)]"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[var(--accent-surface)] accent-[var(--accent-primary)]"
       />
-      <p className="text-xs leading-5 text-[var(--text-muted)]">{hint}</p>
+      <p className="text-[10px] leading-4 text-[var(--text-muted)]">{hint}</p>
     </label>
   );
 }
@@ -186,73 +191,104 @@ interface BackgroundItemProps {
   onRemove: (backgroundId: string) => Promise<void>;
 }
 
+function getDisplayName(name: string) {
+  // Hilangkan prefix "Default_" yang dihasilkan AI generator dan
+  // potong jadi judul singkat manusiawi.
+  const cleaned = name
+    .replace(/^Default[_\s-]+/i, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\.\w+$/i, "")
+    .trim();
+
+  if (!cleaned) {
+    return "Background";
+  }
+
+  // Capitalize first letter, biarkan sisanya seperti sudah dirapihkan
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
 function BackgroundItem({
   background,
   active,
   onSelect,
   onRemove,
 }: BackgroundItemProps) {
-  const previewUrl = useMemo(() => URL.createObjectURL(background.blob), [background.blob]);
+  // JANGAN pakai useEffect cleanup revokeObjectURL — bikin thumbnail rusak
+  // saat parent re-render. Browser akan release URL saat tab ditutup.
+  const previewUrl = useMemo(
+    () => URL.createObjectURL(background.blob),
+    [background.blob],
+  );
 
-  useEffect(() => {
-    return () => {
-      URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+  const displayName = getDisplayName(background.name);
 
   return (
-    <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-      <div className="flex items-start gap-4">
-        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-[18px] bg-[var(--bg-card)]">
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt={background.name}
-              className="h-full w-full object-cover"
-              decoding="async"
-              loading="lazy"
-            />
-          ) : null}
+    <article
+      className={[
+        "relative overflow-hidden rounded-2xl border bg-[var(--bg-card-soft)] transition-colors",
+        active
+          ? "border-[var(--accent-primary)]"
+          : "border-[var(--border-soft)]",
+      ].join(" ")}
+    >
+      {/* Thumbnail image */}
+      <button
+        type="button"
+        onClick={() => void onSelect(background.id)}
+        className="relative block w-full"
+      >
+        <div className="aspect-[4/3] w-full overflow-hidden bg-[var(--bg-card)]">
+          <img
+            src={previewUrl}
+            alt={displayName}
+            className="h-full w-full object-cover"
+            decoding="async"
+            loading="lazy"
+          />
         </div>
+        {active ? (
+          <span className="absolute right-1.5 top-1.5 rounded-full bg-[var(--accent-primary)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--text-on-accent)] shadow-sm">
+            Aktif
+          </span>
+        ) : null}
+      </button>
 
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex items-center justify-between gap-3">
-            <p className="truncate text-sm font-bold text-[var(--text-primary)]">
-              {background.name}
-            </p>
-            <span
-              className={[
-                "rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]",
-                active
-                  ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
-                  : "bg-[var(--bg-card)] text-[var(--text-muted)]",
-              ].join(" ")}
-            >
-              {active ? "Aktif" : "Tersimpan"}
-            </span>
-          </div>
-          <p className="text-xs leading-5 text-[var(--text-muted)]">
-            {background.width}×{background.height} • {formatSize(background.sizeBytes)} • {background.mimeType.replace("image/", "").toUpperCase()}
-          </p>
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Button
-              variant={active ? "primary" : "secondary"}
-              className="min-h-11 px-4"
-              onClick={() => void onSelect(background.id)}
-            >
-              {active ? "Sedang dipakai" : "Pakai ini"}
-            </Button>
-            <Button
-              variant="ghost"
-              className="min-h-11 px-0 text-[var(--danger-soft)]"
-              onClick={() => void onRemove(background.id)}
-            >
-              Hapus
-            </Button>
-          </div>
+      {/* Meta + actions */}
+      <div className="space-y-1.5 px-2.5 py-2">
+        <p
+          className="truncate text-[12px] font-semibold text-[var(--text-primary)]"
+          title={background.name}
+        >
+          {displayName}
+        </p>
+        <p className="truncate text-[10px] leading-4 text-[var(--text-muted)]">
+          {background.width}×{background.height} ·{" "}
+          {formatSize(background.sizeBytes)}
+        </p>
+        <div className="flex items-center justify-between gap-1 pt-1">
+          <button
+            type="button"
+            onClick={() => void onSelect(background.id)}
+            className={[
+              "min-h-7 rounded-full px-2.5 text-[11px] font-semibold transition-colors",
+              active
+                ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                : "border border-[var(--border-soft)] bg-[var(--bg-card)] text-[var(--text-primary)]",
+            ].join(" ")}
+          >
+            {active ? "Dipakai" : "Pakai"}
+          </button>
+          <button
+            type="button"
+            onClick={() => void onRemove(background.id)}
+            className="min-h-7 rounded-full px-2 text-[11px] font-semibold text-[var(--danger-soft)] hover:underline"
+          >
+            Hapus
+          </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 

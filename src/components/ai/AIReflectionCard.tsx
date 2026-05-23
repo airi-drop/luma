@@ -105,7 +105,7 @@ export function AIReflectionCard({
     <Card
       title="Refleksi AI"
       subtitle={`Bacaan pola halus untuk ${formatMonthLabel(month).toLowerCase()} tanpa kirim histori mentah penuh.`}
-      className="bg-[linear-gradient(160deg,rgba(232,168,87,0.14),rgba(143,184,150,0.1),rgba(255,243,220,0.04))]"
+      className="bg-[linear-gradient(160deg,rgba(var(--overlay-glow-primary),0.16),rgba(var(--overlay-glow-secondary),0.10))]"
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">

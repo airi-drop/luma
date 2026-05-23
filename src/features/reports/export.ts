@@ -43,12 +43,23 @@ async function getExportData(month: string) {
   };
 }
 
+function readThemeColor(token: string, fallback: string) {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(token)
+    .trim();
+  return value || fallback;
+}
+
 export async function exportMonthlyReportPdf(
   month: string,
   element: HTMLElement,
 ) {
   const canvas = await html2canvas(element, {
-    backgroundColor: "#1A1410",
+    backgroundColor: readThemeColor("--bg-main", "#FFF5EC"),
     scale: 2,
     useCORS: true,
   });

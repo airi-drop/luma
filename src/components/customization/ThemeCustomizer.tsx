@@ -11,17 +11,17 @@ export function ThemeCustomizer({
   onChange,
 }: ThemeCustomizerProps) {
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <p className="text-sm leading-6 text-[var(--text-secondary)]">
-          Pilih mood warna yang paling nyaman. Begitu dipilih, seluruh app langsung ikut berubah.
+    <div className="space-y-3">
+      <div className="space-y-0.5">
+        <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+          Pilih mood warna paling nyaman. Begitu dipilih, app langsung berubah.
         </p>
-        <p className="text-xs leading-5 text-[var(--text-muted)]">
-          Theme aktif sekarang: {THEME_PRESETS.find((item) => item.id === settings.activeThemeId)?.name ?? "Cozy Dark"}
+        <p className="text-[10px] leading-4 text-[var(--text-muted)]">
+          Aktif: {THEME_PRESETS.find((item) => item.id === settings.activeThemeId)?.name ?? "Pastel Peach"}
         </p>
       </div>
 
-      <div className="grid gap-3">
+      <div className="grid gap-2">
         {THEME_PRESETS.map((theme) => {
           const active = theme.id === settings.activeThemeId;
 
@@ -31,24 +31,24 @@ export function ThemeCustomizer({
               type="button"
               onClick={() => void onChange(theme.id)}
               className={[
-                "rounded-[24px] border p-4 text-left transition-transform duration-150 active:scale-[0.99]",
+                "rounded-2xl border p-3 text-left transition-transform duration-150 active:scale-[0.99]",
                 active
                   ? "border-[var(--accent-primary)] bg-[var(--accent-surface)]"
                   : "border-[var(--border-soft)] bg-[var(--bg-card-soft)]",
               ].join(" ")}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-base font-bold text-[var(--text-primary)]">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[14px] font-bold text-[var(--text-primary)]">
                     {theme.name}
                   </p>
-                  <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                  <p className="mt-0.5 line-clamp-2 text-[11px] leading-4 text-[var(--text-secondary)]">
                     {getThemeDescription(theme.id)}
                   </p>
                 </div>
                 <span
                   className={[
-                    "rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]",
+                    "shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.16em]",
                     active
                       ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                       : "bg-[var(--bg-card)] text-[var(--text-muted)]",
@@ -58,7 +58,7 @@ export function ThemeCustomizer({
                 </span>
               </div>
 
-              <div className="mt-4 flex gap-2">
+              <div className="mt-2 flex gap-1.5">
                 {[
                   theme.tokens["bg-main"],
                   theme.tokens["bg-card"],
@@ -67,7 +67,7 @@ export function ThemeCustomizer({
                 ].map((color) => (
                   <span
                     key={`${theme.id}-${color}`}
-                    className="h-9 w-9 rounded-full border border-black/5"
+                    className="h-6 w-6 rounded-full border border-black/5"
                     style={{ background: color }}
                   />
                 ))}
@@ -83,12 +83,14 @@ export function ThemeCustomizer({
 function getThemeDescription(themeId: string) {
   switch (themeId) {
     case "cream-latte":
-      return "Terang, hangat, dan tetap lembut buat baca angka pelan-pelan.";
+      return "Terang, hangat, lembut buat baca angka pelan-pelan.";
     case "sakura-dream":
-      return "Sedikit dreamy, manis, tapi masih enak buat lihat transaksi.";
+      return "Sedikit dreamy, manis, masih enak buat lihat transaksi.";
     case "midnight-navy":
-      return "Lebih tenang dan dalam, cocok kalau kamu suka vibe malam.";
+      return "Lebih tenang dan dalam, cocok buat vibe malam.";
+    case "cozy-dark":
+      return "Cozy gelap, hangat, rendah cahaya buat malam hari.";
     default:
-      return "Tema default yang cozy, kontrasnya aman, dan paling dekat sama arah produk.";
+      return "Default pastel peach yang lembut, ringan, friendly buat dipakai harian.";
   }
 }

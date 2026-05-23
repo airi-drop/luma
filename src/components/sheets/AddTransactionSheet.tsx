@@ -83,12 +83,12 @@ export function AddTransactionSheet() {
         onClose={handleCloseSheet}
         title="Tambah Transaksi"
       >
-        <div className="space-y-5">
-          <div className="grid grid-cols-2 gap-2 rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-1">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-1.5 rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-1">
             <button
               aria-pressed={activeTab === "manual"}
               className={[
-                "min-h-12 rounded-full px-4 text-sm font-semibold transition-colors motion-reduce:transition-none",
+                "min-h-10 rounded-full px-3 text-[12px] font-semibold transition-colors motion-reduce:transition-none",
                 activeTab === "manual"
                   ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)]",
@@ -101,7 +101,7 @@ export function AddTransactionSheet() {
             <button
               aria-pressed={activeTab === "ai"}
               className={[
-                "min-h-12 rounded-full px-4 text-sm font-semibold transition-colors motion-reduce:transition-none",
+                "min-h-10 rounded-full px-3 text-[12px] font-semibold transition-colors motion-reduce:transition-none",
                 activeTab === "ai"
                   ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)]",
@@ -145,7 +145,7 @@ export function AddTransactionSheet() {
 
 function InlineLoader({ message }: { message: string }) {
   return (
-    <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+    <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3 text-[12px] leading-5 text-[var(--text-secondary)]">
       {message}
     </div>
   );

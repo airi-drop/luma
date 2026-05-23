@@ -1,6 +1,10 @@
 import { type PropsWithChildren, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { applyTheme, getStoredThemeId } from "../features/customization/theme";
+import {
+  clearAllTransactions,
+  seedDummyData,
+} from "../features/transactions/seed";
 import { useBudgetsStore } from "../stores/budgets.store";
 import { useSavingGoalsStore } from "../stores/saving-goals.store";
 import { useSettingsStore } from "../stores/settings.store";
@@ -38,6 +42,48 @@ function DataBootstrap() {
   useEffect(() => {
     applyTheme(settings?.activeThemeId);
   }, [settings?.activeThemeId]);
+
+  // Dev helpers: panggil dari DevTools console.
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const refresh = async () => {
+      const month = useTransactionsStore.getState().month;
+      await Promise.all([
+        useTransactionsStore.getState().loadAll(),
+        useTransactionsStore.getState().loadMonth(month),
+        useBudgetsStore.getState().loadMonth(month),
+      ]);
+    };
+
+    const win = window as typeof window & {
+      lumaSeed?: typeof seedDummyData;
+      lumaClear?: () => Promise<number>;
+    };
+
+    win.lumaSeed = async (...args: Parameters<typeof seedDummyData>) => {
+      const result = await seedDummyData(...args);
+      await refresh();
+      console.info(
+        `[luma] Seeded ${result.totalCreated} dummy transactions across ${result.perMonth.length} months.`,
+      );
+      return result;
+    };
+
+    win.lumaClear = async () => {
+      const removed = await clearAllTransactions();
+      await refresh();
+      console.info(`[luma] Cleared ${removed} transactions.`);
+      return removed;
+    };
+
+    return () => {
+      delete win.lumaSeed;
+      delete win.lumaClear;
+    };
+  }, []);
 
   return null;
 }

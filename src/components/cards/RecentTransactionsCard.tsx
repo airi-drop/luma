@@ -15,38 +15,38 @@ export function RecentTransactionsCard({
       subtitle="Catatan terakhir biar tetap kebaca cepat dari Home."
     >
       {items.length > 0 ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {items.map((transaction) => (
             <article
               key={transaction.id}
-              className="flex items-start justify-between gap-3 rounded-[24px] border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4"
+              className="flex items-start justify-between gap-2 rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3"
             >
-              <div className="min-w-0 space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-semibold text-[var(--text-primary)]">
+              <div className="min-w-0 space-y-0.5">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
                     {transaction.detail}
                   </p>
-                  <span className="rounded-full bg-[rgba(232,168,87,0.14)] px-2.5 py-1 text-[11px] font-semibold text-[var(--accent-soft)]">
+                  <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent-primary)]">
                     {transaction.category}
                   </span>
                 </div>
-                <p className="text-sm text-[var(--text-secondary)]">
+                <p className="text-[11px] text-[var(--text-secondary)]">
                   {transaction.account} · {transaction.date}
                 </p>
-                <p className="text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                   {transaction.source}
                   {transaction.mood ? ` · ${transaction.mood}` : ""}
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-bold text-[var(--text-primary)]">
+              <p className="shrink-0 text-[13px] font-bold text-[var(--text-primary)]">
                 {formatCurrency(transaction.nominal)}
               </p>
             </article>
           ))}
         </div>
       ) : (
-        <div className="rounded-[24px] border border-dashed border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-4">
-          <p className="text-sm leading-6 text-[var(--text-secondary)]">
+        <div className="rounded-2xl border border-dashed border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
+          <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
             Belum ada catatan hari ini. Yuk mulai dari satu transaksi kecil dulu.
           </p>
         </div>
