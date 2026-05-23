@@ -1,5 +1,0 @@
-2026/05/21-12:14:02.432 6658 Creating DB C:\Users\Patoni\Desktop\luma\qa-browser-profile\Default\EdgeCoupons/coupons_data.db since it was missing.
-2026/05/21-12:14:02.445 6658 Reusing MANIFEST C:\Users\Patoni\Desktop\luma\qa-browser-profile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/05/21-12:14:44.833 52c0 Level-0 table #5: started
-2026/05/21-12:14:44.838 52c0 Level-0 table #5: 682468 bytes OK
-2026/05/21-12:14:44.840 52c0 Delete type=0 #3
