@@ -159,9 +159,7 @@ function resolveConfig(): ResolvedConfig {
   const env = getEnv();
   const apiKey =
     config.envApiKey?.trim() ||
-    env.universalKey.trim() ||
-    // Hardcoded fallback — personal project, free tier Gemini.
-    "REMOVED_API_KEY";
+    env.universalKey.trim();
 
   if (!apiKey) {
     throw new AIError("MISSING_API_KEY");
