@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useId, useMemo, useState, type FormEvent } from "react";
 import { CATEGORY_TYPES, type CategoryType } from "../../types";
 import { formatCurrency, parseCurrencyInput } from "../../lib/currency";
 import { getCategoryEmoji, getCategoryLabel } from "../../features/budgets/meta";
@@ -79,6 +79,7 @@ function BudgetSheetForm({
   isSubmitting,
   onSubmit,
 }: BudgetSheetFormProps) {
+  const categoryId = useId();
   const [category, setCategory] = useState<string>(initialCategory ?? "");
   const [nominalText, setNominalText] = useState(toInputValue(initialLimit));
   const [nominalTouched, setNominalTouched] = useState(false);
@@ -94,6 +95,8 @@ function BudgetSheetForm({
     mode === "category" && categoryTouched && !category
       ? "Pilih kategori dulu ya."
       : undefined;
+  const categoryDescriptionId =
+    mode === "category" ? `${categoryId}-${categoryError ? "error" : "hint"}` : undefined;
   const isValidCategory =
     mode === "monthly" ? true : category !== "" && isCategoryType(category);
   const isValid = parsedNominal > 0 && isValidCategory;
@@ -129,11 +132,13 @@ function BudgetSheetForm({
   return (
     <form className="space-y-3" onSubmit={handleSubmit}>
       {mode === "category" ? (
-        <label className="flex w-full flex-col gap-1" htmlFor="budget-category">
+        <label className="flex w-full flex-col gap-1" htmlFor={categoryId}>
           <span className="text-[12px] font-semibold text-[var(--text-secondary)]">
             Kategori
           </span>
           <select
+            aria-describedby={categoryDescriptionId}
+            aria-invalid={categoryError ? true : undefined}
             className={[
               "min-h-12 rounded-xl border bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors",
               categoryError
@@ -141,7 +146,7 @@ function BudgetSheetForm({
                 : "border-[var(--border-soft)] focus:border-[var(--accent-primary)]",
             ].join(" ")}
             disabled={isEditingCategory}
-            id="budget-category"
+            id={categoryId}
             onBlur={() => setCategoryTouched(true)}
             onChange={(event) => setCategory(event.target.value)}
             value={category}
@@ -154,11 +159,17 @@ function BudgetSheetForm({
             ))}
           </select>
           {categoryError ? (
-            <span className="text-[10px] leading-4 text-[var(--danger-soft)]">
+            <span
+              className="text-[10px] leading-4 text-[var(--danger-soft)]"
+              id={categoryDescriptionId}
+            >
               {categoryError}
             </span>
           ) : (
-            <span className="text-[10px] leading-4 text-[var(--text-muted)]">
+            <span
+              className="text-[10px] leading-4 text-[var(--text-muted)]"
+              id={categoryDescriptionId}
+            >
               {isEditingCategory
                 ? "Kategori ini lagi diedit, jadi namanya tetap ya."
                 : "Pilih kategori yang mau kamu jagain dulu."}

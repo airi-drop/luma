@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { formatCurrency } from "../../lib/currency";
@@ -63,7 +63,8 @@ function SelectField({
   placeholder: string;
   error?: string;
 }) {
-  const inputId = label.toLowerCase().replace(/\s+/g, "-");
+  const inputId = useId();
+  const errorId = error ? `${inputId}-error` : undefined;
 
   return (
     <label className="flex w-full flex-col gap-1" htmlFor={inputId}>
@@ -71,6 +72,8 @@ function SelectField({
         {label}
       </span>
       <select
+        aria-describedby={errorId}
+        aria-invalid={error ? true : undefined}
         className={[
           "min-h-12 rounded-xl border bg-[var(--bg-card-soft)] px-3.5 text-[13px] text-[var(--text-primary)] outline-none transition-colors",
           error
@@ -89,7 +92,10 @@ function SelectField({
         ))}
       </select>
       {error ? (
-        <span className="text-[10px] leading-4 text-[var(--danger-soft)]">
+        <span
+          className="text-[10px] leading-4 text-[var(--danger-soft)]"
+          id={errorId}
+        >
           {error}
         </span>
       ) : null}

@@ -98,12 +98,15 @@ export function PageWrapper({
         <header className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0 space-y-1.5">
             <BrandMark />
-            <div className="space-y-0.5">
-              <h1 className="font-display text-[26px] leading-tight font-bold">
+            <div
+              className="space-y-1"
+              style={{ paddingTop: "var(--space-1)" }}
+            >
+              <h1 className="ui-page-title text-[var(--text-primary)]">
                 {title}
               </h1>
               {description ? (
-                <p className="max-w-[34ch] text-[12px] leading-5 text-[var(--text-secondary)]">
+                <p className="ui-helper max-w-[34ch] text-[var(--text-secondary)]">
                   {description}
                 </p>
               ) : null}

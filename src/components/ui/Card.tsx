@@ -17,20 +17,27 @@ export function Card({
   return (
     <section
       className={[
-        "rounded-[20px] border border-[var(--border-soft)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)]",
+        "border border-[var(--border-soft)] bg-[var(--bg-card)] shadow-[var(--shadow-card)]",
         className,
       ].join(" ")}
+      style={{
+        borderRadius: "var(--radius-card-compact)",
+        padding: "var(--space-4)",
+      }}
       {...props}
     >
       {title || subtitle ? (
-        <header className="mb-3 space-y-0.5">
+        <header
+          className="space-y-1"
+          style={{ marginBottom: "var(--space-3)" }}
+        >
           {title ? (
-            <h2 className="text-[15px] font-bold text-[var(--text-primary)]">
+            <h2 className="ui-card-title text-[var(--text-primary)]">
               {title}
             </h2>
           ) : null}
           {subtitle ? (
-            <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+            <p className="ui-helper text-[var(--text-secondary)]">
               {subtitle}
             </p>
           ) : null}

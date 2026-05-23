@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
-import type { ReactNode } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useUiStore } from "../../stores/ui.store";
 
 interface NavItem {
@@ -124,36 +124,78 @@ function NavItemLink({ item }: { item: NavItem }) {
 
 export function BottomNav() {
   const openBottomSheet = useUiStore((state) => state.openBottomSheet);
+  const location = useLocation();
+  const [hasOpenSheet, setHasOpenSheet] = useState(false);
+  const isTargetRoute = location.pathname === "/target";
+
+  const fabConfig = useMemo(
+    () =>
+      isTargetRoute
+        ? {
+            label: "Buat target",
+            ariaLabel: "Buat target baru",
+          }
+        : {
+            label: "Tambah transaksi",
+            ariaLabel: "Tambah transaksi",
+          },
+    [isTargetRoute],
+  );
+
+  useEffect(() => {
+    function handleSheetState(event: Event) {
+      const detail = (event as CustomEvent<{ hasOpenSheet?: boolean }>).detail;
+      setHasOpenSheet(Boolean(detail?.hasOpenSheet));
+    }
+
+    window.addEventListener("luma:sheet-state", handleSheetState);
+    return () => {
+      window.removeEventListener("luma:sheet-state", handleSheetState);
+    };
+  }, []);
+
+  function handleFabClick() {
+    if (isTargetRoute) {
+      window.dispatchEvent(new CustomEvent("luma:create-goal"));
+      return;
+    }
+
+    openBottomSheet("add-transaction");
+  }
 
   return (
     <div
       aria-hidden="false"
-      className="pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4"
+      className={[
+        "fixed inset-x-0 z-30 flex justify-center px-4 transition-opacity duration-150",
+        hasOpenSheet ? "pointer-events-none opacity-0" : "pointer-events-none opacity-100",
+      ].join(" ")}
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
     >
       <div className="pointer-events-auto relative w-full max-w-[420px]">
-        {/* FAB glow halo (visual cutout suggestion) */}
+        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-[calc(100%+8px)]">
+          <span className="inline-flex rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)]/92 px-2.5 py-1 text-[10px] font-semibold text-[var(--text-secondary)] shadow-[0_8px_18px_rgba(122,90,72,0.10)] backdrop-blur-sm">
+            {fabConfig.label}
+          </span>
+        </div>
+
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(var(--overlay-base-rgb),0.55),transparent_65%)] blur-md"
+          className="pointer-events-none absolute left-1/2 top-0 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(var(--overlay-base-rgb),0.42),transparent_68%)] blur-md"
         />
 
-        {/* Pill container */}
         <nav
           aria-label="Navigasi utama"
-          className="relative flex h-[60px] items-center justify-between rounded-full border border-[var(--border-soft)] bg-[color:var(--bg-elevated)]/85 px-3 shadow-[0_14px_32px_rgba(122,90,72,0.18)] backdrop-blur-xl"
+          className="relative flex h-[56px] items-center justify-between rounded-full border border-[var(--border-soft)] bg-[color:var(--bg-elevated)]/82 px-3 shadow-[0_10px_24px_rgba(122,90,72,0.12)] backdrop-blur-xl"
         >
-          {/* left cluster */}
           <div className="flex items-center gap-1">
             {leftItems.map((item) => (
               <NavItemLink item={item} key={item.to} />
             ))}
           </div>
 
-          {/* center spacer to make room for the FAB */}
-          <div aria-hidden="true" className="h-12 w-16 shrink-0" />
+          <div aria-hidden="true" className="h-11 w-14 shrink-0" />
 
-          {/* right cluster */}
           <div className="flex items-center gap-1">
             {rightItems.map((item) => (
               <NavItemLink item={item} key={item.to} />
@@ -161,11 +203,10 @@ export function BottomNav() {
           </div>
         </nav>
 
-        {/* Floating Action Button */}
         <button
-          aria-label="Tambah transaksi"
-          className="absolute left-1/2 top-0 inline-flex h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[var(--shadow-fab,0_10px_24px_rgba(242,155,118,0.45)),0_4px_10px_rgba(122,90,72,0.18)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
-          onClick={() => openBottomSheet("add-transaction")}
+          aria-label={fabConfig.ariaLabel}
+          className="absolute left-1/2 top-0 inline-flex h-[56px] w-[56px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[0_10px_20px_rgba(242,155,118,0.28),0_3px_8px_rgba(122,90,72,0.14)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
+          onClick={handleFabClick}
           style={{
             background:
               "linear-gradient(160deg, var(--accent-soft) 0%, var(--accent-primary) 100%)",
@@ -182,7 +223,15 @@ export function BottomNav() {
             viewBox="0 0 24 24"
             width="22"
           >
-            <path d="M12 5v14M5 12h14" />
+            {isTargetRoute ? (
+              <>
+                <circle cx="12" cy="12" r="5.4" />
+                <circle cx="12" cy="12" r="2.3" />
+                <path d="M18.5 5.5v4M16.5 7.5h4" />
+              </>
+            ) : (
+              <path d="M12 5v14M5 12h14" />
+            )}
           </svg>
         </button>
       </div>

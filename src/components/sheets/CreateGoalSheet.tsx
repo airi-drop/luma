@@ -3,6 +3,7 @@ import { formatCurrency, parseCurrencyInput } from "../../lib/currency";
 import { BottomSheet } from "../ui/BottomSheet";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { IconBadge } from "../ui/IconBadge";
 import type { CreateSavingGoalInput } from "../../types";
 
 interface CreateGoalSheetProps {
@@ -158,8 +159,8 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
       <div className="space-y-2">
         <Input
           error={iconError}
-          hint={iconError ? undefined : "Satu emoji kecil cukup biar gampang dikenali."}
-          label="Emoji / icon"
+          hint={iconError ? undefined : "Pilih satu emoji kecil biar targetnya gampang dikenali."}
+          label="Icon target"
           maxLength={4}
           onBlur={() => setTouched((state) => ({ ...state, icon: true }))}
           onChange={(event) => setIcon(event.target.value)}
@@ -171,15 +172,19 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
             <button
               key={suggestion}
               className={[
-                "inline-flex h-9 w-9 items-center justify-center rounded-full border text-base",
+                "rounded-[18px] p-0.5 transition-transform duration-150 active:scale-[0.97]",
                 icon === suggestion
-                  ? "border-[var(--accent-primary)] bg-[var(--accent-surface)]"
-                  : "border-[var(--border-soft)] bg-[var(--bg-card-soft)]",
+                  ? "bg-[var(--accent-surface)]"
+                  : "bg-transparent",
               ].join(" ")}
               onClick={() => setIcon(suggestion)}
               type="button"
             >
-              {suggestion}
+              <IconBadge
+                icon={suggestion}
+                size="sm"
+                tone={icon === suggestion ? "accent" : "soft"}
+              />
             </button>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import { formatCurrency } from "../../lib/currency";
 import { formatDateLabel } from "../../lib/date";
 import type { SavingGoal, SavingGoalProgress } from "../../types";
+import { IconBadge } from "../ui/IconBadge";
 
 interface SavingGoalCardProps {
   goal: SavingGoal;
@@ -58,9 +59,7 @@ export function SavingGoalCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-start gap-2.5">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--bg-card-soft)] text-xl">
-              {goal.icon}
-            </span>
+            <IconBadge icon={goal.icon} size="md" tone="soft" />
             <div className="min-w-0 flex-1 space-y-0.5">
               <p className="truncate text-[14px] font-bold text-[var(--text-primary)]">
                 {goal.title}

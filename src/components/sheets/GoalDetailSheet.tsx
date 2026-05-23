@@ -6,6 +6,7 @@ import { useSavingGoalsStore } from "../../stores/saving-goals.store";
 import { BottomSheet } from "../ui/BottomSheet";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { IconBadge } from "../ui/IconBadge";
 import { Input } from "../ui/Input";
 import type { SavingGoal } from "../../types";
 
@@ -254,9 +255,7 @@ function GoalDetailContent({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1 space-y-1.5">
               <div className="flex items-center gap-2.5">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--bg-card-soft)] text-xl">
-                  {goal.icon}
-                </span>
+                <IconBadge icon={goal.icon} size="md" tone="accent" />
                 <div className="min-w-0">
                   <p className="truncate text-[14px] font-bold text-[var(--text-primary)]">
                     {goal.title}
@@ -449,7 +448,7 @@ function GoalDetailContent({
             <div className="space-y-2">
               <Input
                 error={iconError}
-                label="Emoji / icon"
+                label="Icon target"
                 maxLength={4}
                 onBlur={() => setTouched((state) => ({ ...state, icon: true }))}
                 onChange={(event) => setIcon(event.target.value)}
@@ -461,15 +460,19 @@ function GoalDetailContent({
                   <button
                     key={suggestion}
                     className={[
-                      "inline-flex h-9 w-9 items-center justify-center rounded-full border text-base",
+                      "rounded-[18px] p-0.5 transition-transform duration-150 active:scale-[0.97]",
                       icon === suggestion
-                        ? "border-[var(--accent-primary)] bg-[var(--accent-surface)]"
-                        : "border-[var(--border-soft)] bg-[var(--bg-card-soft)]",
+                        ? "bg-[var(--accent-surface)]"
+                        : "bg-transparent",
                     ].join(" ")}
                     onClick={() => setIcon(suggestion)}
                     type="button"
                   >
-                    {suggestion}
+                    <IconBadge
+                      icon={suggestion}
+                      size="sm"
+                      tone={icon === suggestion ? "accent" : "soft"}
+                    />
                   </button>
                 ))}
               </div>

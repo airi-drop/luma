@@ -1,18 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Suspense, lazy, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AIReflectionCard } from "../components/ai/AIReflectionCard";
 import { MonthlyRecapExport } from "../components/reports/MonthlyRecapExport";
@@ -29,21 +15,10 @@ import { useSettingsStore } from "../stores/settings.store";
 import { useTransactionsStore } from "../stores/transactions.store";
 import { useUiStore } from "../stores/ui.store";
 
-function ChartCard({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  children: ReactNode;
-}) {
-  return (
-    <Card title={title} subtitle={subtitle}>
-      <div className="h-52">{children}</div>
-    </Card>
-  );
-}
+const ReportChartsSection = lazy(async () => {
+  const module = await import("../components/reports/ReportChartsSection");
+  return { default: module.ReportChartsSection };
+});
 
 export function ReportsPage() {
   const reportRef = useRef<HTMLDivElement | null>(null);
@@ -89,7 +64,7 @@ export function ReportsPage() {
     setIsExportingPdf(true);
 
     try {
-      const { exportMonthlyReportPdf } = await import("../features/reports/export");
+      const { exportMonthlyReportPdf } = await import("../features/reports/export-pdf");
       await exportMonthlyReportPdf(selectedMonth, reportRef.current);
     } finally {
       setIsExportingPdf(false);
@@ -100,7 +75,7 @@ export function ReportsPage() {
     setIsExportingXlsx(true);
 
     try {
-      const { exportMonthlySpreadsheetXlsx } = await import("../features/reports/export");
+      const { exportMonthlySpreadsheetXlsx } = await import("../features/reports/export-xlsx");
       await exportMonthlySpreadsheetXlsx(selectedMonth);
     } finally {
       setIsExportingXlsx(false);
@@ -111,7 +86,7 @@ export function ReportsPage() {
     setIsExportingCsv(true);
 
     try {
-      const { exportMonthlySpreadsheetCsv } = await import("../features/reports/export");
+      const { exportMonthlySpreadsheetCsv } = await import("../features/reports/export-csv");
       await exportMonthlySpreadsheetCsv(selectedMonth);
     } finally {
       setIsExportingCsv(false);
@@ -140,13 +115,28 @@ export function ReportsPage() {
         subtitle="Unduh recap visual atau spreadsheet kalau mau dicek di luar app."
       >
         <div className="grid grid-cols-3 gap-2">
-          <Button disabled={!hasReportContent || isExportingPdf} onClick={handleExportPdf} variant="secondary">
+          <Button
+            className="min-h-10 text-[12px]"
+            disabled={!hasReportContent || isExportingPdf}
+            onClick={handleExportPdf}
+            variant="secondary"
+          >
             {isExportingPdf ? "PDF..." : "PDF"}
           </Button>
-          <Button disabled={!hasReportContent || isExportingXlsx} onClick={handleExportXlsx} variant="secondary">
+          <Button
+            className="min-h-10 text-[12px]"
+            disabled={!hasReportContent || isExportingXlsx}
+            onClick={handleExportXlsx}
+            variant="secondary"
+          >
             {isExportingXlsx ? "XLSX..." : "XLSX"}
           </Button>
-          <Button disabled={!hasReportContent || isExportingCsv} onClick={handleExportCsv} variant="secondary">
+          <Button
+            className="min-h-10 text-[12px]"
+            disabled={!hasReportContent || isExportingCsv}
+            onClick={handleExportCsv}
+            variant="secondary"
+          >
             {isExportingCsv ? "CSV..." : "CSV"}
           </Button>
         </div>
@@ -277,134 +267,24 @@ export function ReportsPage() {
           </Card>
 
           <AIReflectionCard
+            activeCharacterId={settings?.activeCharacterId}
             month={selectedMonth}
             transactions={monthTransactions}
             aiEnabled={settings?.aiEnabled ?? false}
           />
 
-          <Card
-            title="Category breakdown"
-            subtitle="Biar cepat kebaca kategori mana yang paling banyak kepakai."
+          <Suspense
+            fallback={
+              <Card
+                title="Menyiapkan chart"
+                subtitle="Bagian visualnya lagi dibuka dulu biar halaman awal tetap ringan."
+              >
+                <div className="h-52 animate-pulse rounded-2xl bg-[var(--bg-card-soft)]" />
+              </Card>
+            }
           >
-            <div className="h-48">
-              <ResponsiveContainer height="100%" width="100%">
-                <PieChart>
-                  <Pie
-                    cx="50%"
-                    cy="50%"
-                    data={reportData.categoryBreakdown}
-                    dataKey="total"
-                    innerRadius={50}
-                    outerRadius={78}
-                    paddingAngle={3}
-                  >
-                    {reportData.categoryBreakdown.map((item) => (
-                      <Cell fill={item.color} key={item.category} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value) => formatCurrency(Number(value ?? 0))}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-3 grid gap-1.5">
-              {reportData.categoryBreakdown.slice(0, 5).map((item) => (
-                <div
-                  key={item.category}
-                  className="flex items-center justify-between gap-2 rounded-xl bg-[var(--bg-card-soft)] px-2.5 py-1.5 text-[12px]"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="font-semibold text-[var(--text-primary)]">
-                      {item.category}
-                    </span>
-                  </div>
-                  <span className="text-[var(--text-secondary)]">
-                    {formatCurrency(item.total)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <ChartCard
-            subtitle="Grafik harian biar ritme pengeluaran bulan ini lebih gampang dilihat."
-            title="Spending trend"
-          >
-            <ResponsiveContainer height="100%" width="100%">
-              <AreaChart data={reportData.spendingTrend}>
-                <defs>
-                  <linearGradient id="trendFill" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="5%" stopColor="#F29B76" stopOpacity={0.55} />
-                    <stop offset="95%" stopColor="#F29B76" stopOpacity={0.04} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="rgba(122,90,72,0.14)" strokeDasharray="3 3" />
-                <XAxis
-                  axisLine={false}
-                  dataKey="label"
-                  minTickGap={18}
-                  tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-                  tickLine={false}
-                />
-                <YAxis
-                  axisLine={false}
-                  tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-                  tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
-                  tickLine={false}
-                  width={42}
-                />
-                <Tooltip
-                  formatter={(value) => formatCurrency(Number(value ?? 0))}
-                  labelFormatter={(label) => `Tanggal ${label}`}
-                />
-                <Area
-                  dataKey="total"
-                  fill="url(#trendFill)"
-                  stroke="#F29B76"
-                  strokeWidth={3}
-                  type="monotone"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartCard>
-
-          <ChartCard
-            subtitle="Perbandingan limit dan pemakaian budget bulan ini."
-            title="Budget comparison"
-          >
-            <ResponsiveContainer height="100%" width="100%">
-              <BarChart data={reportData.budgetComparison}>
-                <CartesianGrid stroke="rgba(122,90,72,0.14)" strokeDasharray="3 3" />
-                <XAxis
-                  axisLine={false}
-                  dataKey="label"
-                  tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-                  tickLine={false}
-                />
-                <YAxis
-                  axisLine={false}
-                  tick={{ fill: "var(--text-muted)", fontSize: 11 }}
-                  tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
-                  tickLine={false}
-                  width={42}
-                />
-                <Tooltip
-                  formatter={(value) => formatCurrency(Number(value ?? 0))}
-                />
-                <Bar dataKey="limit" fill="rgba(122,90,72,0.16)" radius={[10, 10, 0, 0]} />
-                <Bar dataKey="used" radius={[10, 10, 0, 0]}>
-                  {reportData.budgetComparison.map((item) => (
-                    <Cell fill={item.color} key={item.label} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
+            <ReportChartsSection reportData={reportData} />
+          </Suspense>
         </>
       ) : (
         <Card
