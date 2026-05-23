@@ -96,7 +96,7 @@ function NavItemLink({ item }: { item: NavItem }) {
       to={item.to}
       className={({ isActive }) =>
         [
-          "group relative flex h-12 w-16 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors duration-200 motion-reduce:transition-none",
+          "group relative flex h-11 w-[60px] flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors duration-200 motion-reduce:transition-none",
           isActive
             ? "text-[var(--accent-primary)]"
             : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]",
@@ -132,11 +132,9 @@ export function BottomNav() {
     () =>
       isTargetRoute
         ? {
-            label: "Buat target",
             ariaLabel: "Buat target baru",
           }
         : {
-            label: "Tambah transaksi",
             ariaLabel: "Tambah transaksi",
           },
     [isTargetRoute],
@@ -173,20 +171,14 @@ export function BottomNav() {
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
     >
       <div className="pointer-events-auto relative w-full max-w-[420px]">
-        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-[calc(100%+8px)]">
-          <span className="inline-flex rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)]/92 px-2.5 py-1 text-[10px] font-semibold text-[var(--text-secondary)] shadow-[0_8px_18px_rgba(122,90,72,0.10)] backdrop-blur-sm">
-            {fabConfig.label}
-          </span>
-        </div>
-
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-0 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(var(--overlay-base-rgb),0.42),transparent_68%)] blur-md"
+          className="pointer-events-none absolute left-1/2 top-0 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(var(--overlay-base-rgb),0.34),transparent_68%)] blur-md"
         />
 
         <nav
           aria-label="Navigasi utama"
-          className="relative flex h-[56px] items-center justify-between rounded-full border border-[var(--border-soft)] bg-[color:var(--bg-elevated)]/82 px-3 shadow-[0_10px_24px_rgba(122,90,72,0.12)] backdrop-blur-xl"
+          className="relative flex h-[52px] items-center justify-between rounded-full border border-[var(--border-soft)] bg-[color:var(--bg-elevated)]/84 px-2.5 shadow-[0_8px_22px_rgba(122,90,72,0.11)] backdrop-blur-xl"
         >
           <div className="flex items-center gap-1">
             {leftItems.map((item) => (
@@ -194,7 +186,7 @@ export function BottomNav() {
             ))}
           </div>
 
-          <div aria-hidden="true" className="h-11 w-14 shrink-0" />
+          <div aria-hidden="true" className="h-10 w-[52px] shrink-0" />
 
           <div className="flex items-center gap-1">
             {rightItems.map((item) => (
@@ -205,7 +197,7 @@ export function BottomNav() {
 
         <button
           aria-label={fabConfig.ariaLabel}
-          className="absolute left-1/2 top-0 inline-flex h-[56px] w-[56px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[0_10px_20px_rgba(242,155,118,0.28),0_3px_8px_rgba(122,90,72,0.14)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
+          className="absolute left-1/2 top-0 inline-flex h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[0_10px_20px_rgba(242,155,118,0.24),0_3px_8px_rgba(122,90,72,0.12)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
           onClick={handleFabClick}
           style={{
             background:
