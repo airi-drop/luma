@@ -11,3 +11,7 @@ qa-screenshots/
 .tmp-chrome-profile/
 tmp-report-audit/
 tmp-cdp-test.ps1
+
+.tmp-chrome-profile/
+tmp-report-audit/
+tmp-cdp-test.ps1

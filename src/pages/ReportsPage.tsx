@@ -1,7 +1,6 @@
-import { Suspense, lazy, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AIReflectionCard } from "../components/ai/AIReflectionCard";
-import { MonthlyRecapExport } from "../components/reports/MonthlyRecapExport";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -20,8 +19,26 @@ const ReportChartsSection = lazy(async () => {
   return { default: module.ReportChartsSection };
 });
 
+function ExportIcon({ kind }: { kind: "pdf" | "xlsx" | "csv" }) {
+  const config = {
+    pdf: { label: "PDF", bubble: "bg-[#F2685A] text-white" },
+    xlsx: { label: "XLS", bubble: "bg-[#73BF63] text-white" },
+    csv: { label: "CSV", bubble: "bg-[var(--bg-card)] text-[var(--text-secondary)]" },
+  }[kind];
+
+  return (
+    <span
+      className={[
+        "inline-flex h-5 min-w-[24px] items-center justify-center rounded-full px-1.5 text-[9px] font-black tracking-[0.08em]",
+        config.bubble,
+      ].join(" ")}
+    >
+      {config.label}
+    </span>
+  );
+}
+
 export function ReportsPage() {
-  const reportRef = useRef<HTMLDivElement | null>(null);
   const selectedMonth = useUiStore((state) => state.selectedMonth);
   const setSelectedMonth = useUiStore((state) => state.setSelectedMonth);
   const monthTransactions = useTransactionsStore((state) => state.items);
@@ -57,15 +74,11 @@ export function ReportsPage() {
     reportData.savingGoalsSummary.targetAmount > 0;
 
   async function handleExportPdf() {
-    if (!reportRef.current) {
-      return;
-    }
-
     setIsExportingPdf(true);
 
     try {
       const { exportMonthlyReportPdf } = await import("../features/reports/export-pdf");
-      await exportMonthlyReportPdf(selectedMonth, reportRef.current);
+      await exportMonthlyReportPdf(selectedMonth);
     } finally {
       setIsExportingPdf(false);
     }
@@ -95,6 +108,7 @@ export function ReportsPage() {
 
   return (
     <PageWrapper
+      bottomPadding={140}
       title="Laporan"
       description="Rekap bulanan yang tetap cozy, tapi angka pentingnya masih gampang dicari."
     >
@@ -108,35 +122,37 @@ export function ReportsPage() {
         />
       </Card>
 
-      <MonthlyRecapExport data={reportData} ref={reportRef} />
-
       <Card
+        className="px-4 py-4"
         title="Ekspor bulan ini"
-        subtitle="Unduh recap visual atau spreadsheet kalau mau dicek di luar app."
+        subtitle="PDF dibuat sebagai recap bulanan yang rapi, sementara XLSX dan CSV tetap fokus ke data."
       >
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
-            className="min-h-10 text-[12px]"
+            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
             disabled={!hasReportContent || isExportingPdf}
             onClick={handleExportPdf}
             variant="secondary"
           >
+            <ExportIcon kind="pdf" />
             {isExportingPdf ? "PDF..." : "PDF"}
           </Button>
           <Button
-            className="min-h-10 text-[12px]"
+            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
             disabled={!hasReportContent || isExportingXlsx}
             onClick={handleExportXlsx}
             variant="secondary"
           >
+            <ExportIcon kind="xlsx" />
             {isExportingXlsx ? "XLSX..." : "XLSX"}
           </Button>
           <Button
-            className="min-h-10 text-[12px]"
+            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
             disabled={!hasReportContent || isExportingCsv}
             onClick={handleExportCsv}
             variant="secondary"
           >
+            <ExportIcon kind="csv" />
             {isExportingCsv ? "CSV..." : "CSV"}
           </Button>
         </div>
