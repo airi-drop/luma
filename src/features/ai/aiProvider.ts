@@ -4,7 +4,7 @@ import { AIError } from "./types";
 
 /**
  * Build-time injected env (via vite.config.ts define).
- * Dijamin inline ke bundle saat build, termasuk di Vercel.
+ * Hanya dipakai untuk development lokal.
  */
 declare const __LUMA_ENV__: {
   geminiKey: string;
@@ -21,12 +21,12 @@ function getEnv() {
   }
 
   return {
-    geminiKey: import.meta.env.VITE_GEMINI_API_KEY ?? "",
-    openaiKey: import.meta.env.VITE_OPENAI_API_KEY ?? "",
-    openrouterKey: import.meta.env.VITE_OPENROUTER_API_KEY ?? "",
-    universalKey: import.meta.env.VITE_AI_API_KEY ?? "",
-    provider: import.meta.env.VITE_AI_PROVIDER ?? "",
-    model: import.meta.env.VITE_AI_MODEL ?? "",
+    geminiKey: "",
+    openaiKey: "",
+    openrouterKey: "",
+    universalKey: "",
+    provider: "",
+    model: "",
   };
 }
 

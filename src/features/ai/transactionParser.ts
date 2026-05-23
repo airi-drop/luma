@@ -4,6 +4,7 @@ import {
   type AccountType,
   type CategoryType,
 } from "../../types";
+import { getCurrentDate } from "../../lib/date";
 import { geminiGenerate } from "./geminiClient";
 import { buildParserPrompt } from "./prompt";
 import type { ParseResult, ParserDraft } from "./types";
@@ -135,6 +136,100 @@ function normalizeDate(value: unknown) {
   return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : undefined;
 }
 
+function extractExplicitDate(text: string) {
+  const isoMatch = text.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+
+  if (isoMatch) {
+    return normalizeDate(isoMatch[1]);
+  }
+
+  const localMatch = text.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b/);
+
+  if (!localMatch) {
+    return undefined;
+  }
+
+  const day = Number(localMatch[1]);
+  const month = Number(localMatch[2]);
+  const year = Number(localMatch[3].length === 2 ? `20${localMatch[3]}` : localMatch[3]);
+
+  if (!Number.isFinite(day) || !Number.isFinite(month) || !Number.isFinite(year)) {
+    return undefined;
+  }
+
+  return normalizeDate(
+    `${year.toString().padStart(4, "0")}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`,
+  );
+}
+
+function findAmountToken(text: string) {
+  return text.match(/\brp?\s*\d+(?:[.,]\d+)?\s*(?:rb|k|jt)?\b/i)?.[0] ?? null;
+}
+
+function buildFallbackDetail(text: string) {
+  const cleanupPatterns = [
+    /\brp?\s*\d+(?:[.,]\d+)?\s*(?:rb|k|jt)?\b/gi,
+    /\b(?:cash|tunai|dompet|e-wallet|ewallet|gopay|ovo|dana|shopeepay|linkaja|bni|bca|mandiri|livin)\b/gi,
+    /\b(?:pakai|via|dari)\b/gi,
+    /\b\d{4}-\d{2}-\d{2}\b/g,
+    /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g,
+  ];
+
+  let candidate = text;
+
+  for (const pattern of cleanupPatterns) {
+    candidate = candidate.replace(pattern, " ");
+  }
+
+  candidate = candidate
+    .replace(/[.,;:]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return candidate || text.trim();
+}
+
+function parseWithHeuristics(text: string): ParseResult {
+  const amountToken = findAmountToken(text);
+
+  if (!amountToken) {
+    throw new AIError("VALIDATION_FAILED");
+  }
+
+  const account = snapEnum(text, ACCOUNT_TYPES, accountSynonyms);
+  const category = snapEnum(text, CATEGORY_TYPES, categorySynonyms);
+  const detail = toTitleCase(buildFallbackDetail(text)).slice(0, 120);
+
+  if (!detail) {
+    throw new AIError("VALIDATION_FAILED");
+  }
+
+  let confidence = 0.56;
+
+  if (account !== "Other") {
+    confidence += 0.12;
+  }
+
+  if (category !== "Other") {
+    confidence += 0.12;
+  }
+
+  const date = extractExplicitDate(text);
+
+  if (date === getCurrentDate()) {
+    confidence -= 0.04;
+  }
+
+  return {
+    detail,
+    nominal: normalizeAmount(amountToken),
+    category,
+    account,
+    date,
+    confidence: clampConfidence(confidence),
+  };
+}
+
 export async function parseUserText(text: string): Promise<ParseResult> {
   const trimmed = text.trim();
 
@@ -142,17 +237,27 @@ export async function parseUserText(text: string): Promise<ParseResult> {
     throw new AIError("EMPTY_INPUT");
   }
 
-  const raw = await geminiGenerate({
-    prompt: buildParserPrompt(trimmed),
-    timeoutMs: 8000,
-  });
+  let raw: string;
+
+  try {
+    raw = await geminiGenerate({
+      prompt: buildParserPrompt(trimmed),
+      timeoutMs: 8000,
+    });
+  } catch (error) {
+    if (error instanceof AIError) {
+      return parseWithHeuristics(trimmed);
+    }
+
+    throw error;
+  }
 
   let draft: ParserDraft;
 
   try {
     draft = JSON.parse(stripMarkdownFence(raw)) as ParserDraft;
   } catch {
-    throw new AIError("PARSE_FAILED");
+    return parseWithHeuristics(trimmed);
   }
 
   const detail =
@@ -161,15 +266,19 @@ export async function parseUserText(text: string): Promise<ParseResult> {
       : "";
 
   if (!detail) {
-    throw new AIError("VALIDATION_FAILED");
+    return parseWithHeuristics(trimmed);
   }
 
-  return {
-    detail,
-    nominal: normalizeAmount(draft.nominal),
-    category: snapEnum(draft.category, CATEGORY_TYPES, categorySynonyms),
-    account: snapEnum(draft.account, ACCOUNT_TYPES, accountSynonyms),
-    date: normalizeDate(draft.date),
-    confidence: clampConfidence(draft.confidence),
-  };
+  try {
+    return {
+      detail,
+      nominal: normalizeAmount(draft.nominal),
+      category: snapEnum(draft.category, CATEGORY_TYPES, categorySynonyms),
+      account: snapEnum(draft.account, ACCOUNT_TYPES, accountSynonyms),
+      date: normalizeDate(draft.date),
+      confidence: clampConfidence(draft.confidence),
+    };
+  } catch {
+    return parseWithHeuristics(trimmed);
+  }
 }

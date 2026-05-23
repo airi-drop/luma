@@ -4,9 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => {
-  // loadEnv membaca .env* files dari disk (lokal dev).
-  // Di Vercel, env vars hanya ada di process.env (bukan file).
-  // Jadi kita merge keduanya.
+  // AI key jangan ikut masuk bundle production.
+  // Kalau nanti butuh AI production, pakai proxy/backend terpisah.
   const fileEnv = loadEnv(mode, process.cwd(), "");
 
   const get = (key: string) =>
@@ -15,12 +14,30 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       __LUMA_ENV__: JSON.stringify({
-        geminiKey: get("VITE_GEMINI_API_KEY") || get("GEMINI_API_KEY"),
-        openaiKey: get("VITE_OPENAI_API_KEY") || get("OPENAI_API_KEY"),
-        openrouterKey: get("VITE_OPENROUTER_API_KEY") || get("OPENROUTER_API_KEY"),
-        universalKey: get("VITE_AI_API_KEY") || get("AI_API_KEY"),
-        provider: get("VITE_AI_PROVIDER") || get("AI_PROVIDER"),
-        model: get("VITE_AI_MODEL") || get("AI_MODEL"),
+        geminiKey:
+          mode === "production"
+            ? ""
+            : get("VITE_GEMINI_API_KEY") || get("GEMINI_API_KEY"),
+        openaiKey:
+          mode === "production"
+            ? ""
+            : get("VITE_OPENAI_API_KEY") || get("OPENAI_API_KEY"),
+        openrouterKey:
+          mode === "production"
+            ? ""
+            : get("VITE_OPENROUTER_API_KEY") || get("OPENROUTER_API_KEY"),
+        universalKey:
+          mode === "production"
+            ? ""
+            : get("VITE_AI_API_KEY") || get("AI_API_KEY"),
+        provider:
+          mode === "production"
+            ? ""
+            : get("VITE_AI_PROVIDER") || get("AI_PROVIDER"),
+        model:
+          mode === "production"
+            ? ""
+            : get("VITE_AI_MODEL") || get("AI_MODEL"),
       }),
     },
     plugins: [

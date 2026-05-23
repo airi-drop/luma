@@ -24,14 +24,18 @@ export function BottomSheet({
       return undefined;
     }
 
+    const { overflow } = document.body.style;
+
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         onClose();
       }
     }
 
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleEscape);
     return () => {
+      document.body.style.overflow = overflow;
       window.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);

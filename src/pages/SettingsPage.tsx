@@ -7,7 +7,13 @@ import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { prepareBackgroundAsset } from "../features/customization/image";
 import { getCharacterById, getThemeById } from "../features/customization/presets";
+import { appDataRepo } from "../db/repositories/app-data.repo";
+import { useBudgetsStore } from "../stores/budgets.store";
 import { useSettingsStore } from "../stores/settings.store";
+import { useSavingGoalsStore } from "../stores/saving-goals.store";
+import { useTransactionsStore } from "../stores/transactions.store";
+import { useUiStore } from "../stores/ui.store";
+import { useState } from "react";
 
 export function SettingsPage() {
   const settings = useSettingsStore((state) => state.settings);
@@ -16,6 +22,14 @@ export function SettingsPage() {
   const createBackground = useSettingsStore((state) => state.createBackground);
   const removeBackground = useSettingsStore((state) => state.removeBackground);
   const resetCustomization = useSettingsStore((state) => state.resetCustomization);
+  const currentMonth = useTransactionsStore((state) => state.month);
+  const loadTransactions = useTransactionsStore((state) => state.loadMonth);
+  const loadAllTransactions = useTransactionsStore((state) => state.loadAll);
+  const loadBudgets = useBudgetsStore((state) => state.loadMonth);
+  const loadGoals = useSavingGoalsStore((state) => state.loadGoals);
+  const showToast = useUiStore((state) => state.showToast);
+  const [isClearingData, setIsClearingData] = useState(false);
+  const [isConfirmingClear, setIsConfirmingClear] = useState(false);
 
   if (!settings) {
     return (
@@ -90,6 +104,38 @@ export function SettingsPage() {
 
   async function handleReset() {
     await resetCustomization();
+  }
+
+  async function handleClearFinanceData() {
+    setIsClearingData(true);
+
+    try {
+      const removedCount = await appDataRepo.clearFinanceData();
+      await Promise.all([
+        loadTransactions(currentMonth),
+        loadAllTransactions(),
+        loadBudgets(currentMonth),
+        loadGoals(),
+      ]);
+      setIsConfirmingClear(false);
+      showToast({
+        message:
+          removedCount > 0
+            ? "Data finansial di device ini sudah dibersihkan."
+            : "Data finansialnya memang sudah kosong.",
+        tone: "info",
+      });
+    } catch (error) {
+      showToast({
+        message:
+          error instanceof Error
+            ? error.message
+            : "Belum berhasil hapus data. Coba lagi ya.",
+        tone: "error",
+      });
+    } finally {
+      setIsClearingData(false);
+    }
   }
 
   const activeTheme = getThemeById(settings.activeThemeId);
@@ -167,8 +213,8 @@ export function SettingsPage() {
             </p>
             <p className="text-[11px] leading-4 text-[var(--text-secondary)]">
               Pakai AI buat parse teks jadi transaksi & refleksi bulanan.
-              Konfigurasi provider dan API key diatur di{" "}
-              <code className="font-mono">.env.local</code>.
+              Build production sengaja tidak menyimpan API key di browser.
+              Kalau mau AI penuh di production, sambungkan lewat proxy/backend.
             </p>
           </div>
           <button
@@ -196,6 +242,45 @@ export function SettingsPage() {
             Reset tampilan
           </Button>
         </div>
+      </Card>
+
+      <Card title="Data finansial">
+        {isConfirmingClear ? (
+          <div className="space-y-3">
+            <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
+              Semua transaksi, budget, target tabungan, dan cache AI lokal akan dihapus dari device ini. Tampilan personalmu tetap aman.
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                className="flex-1"
+                disabled={isClearingData}
+                onClick={() => setIsConfirmingClear(false)}
+                variant="secondary"
+              >
+                Batal
+              </Button>
+              <Button
+                className="flex-1 bg-[var(--danger-soft)] text-white shadow-none"
+                disabled={isClearingData}
+                onClick={() => void handleClearFinanceData()}
+              >
+                {isClearingData ? "Menghapus..." : "Iya, hapus data"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-[34ch] text-[12px] leading-5 text-[var(--text-secondary)]">
+              Kalau sempat isi demo data atau mau mulai ulang catatan finansial, hapus semua data inti dari sini.
+            </p>
+            <Button
+              className="bg-[var(--danger-soft)] text-white shadow-none"
+              onClick={() => setIsConfirmingClear(true)}
+            >
+              Hapus Data Finansial
+            </Button>
+          </div>
+        )}
       </Card>
     </PageWrapper>
   );
