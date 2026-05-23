@@ -4,37 +4,23 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => {
-  // loadEnv membaca .env, .env.local, .env.[mode], dll
-  // dan mengembalikan object { VITE_GEMINI_API_KEY: "...", ... }
-  const env = loadEnv(mode, process.cwd(), "");
+  // loadEnv membaca .env* files dari disk (lokal dev).
+  // Di Vercel, env vars hanya ada di process.env (bukan file).
+  // Jadi kita merge keduanya.
+  const fileEnv = loadEnv(mode, process.cwd(), "");
+
+  const get = (key: string) =>
+    fileEnv[key] || process.env[key] || "";
 
   return {
     define: {
       __LUMA_ENV__: JSON.stringify({
-        geminiKey:
-          env.VITE_GEMINI_API_KEY ||
-          env.GEMINI_API_KEY ||
-          "",
-        openaiKey:
-          env.VITE_OPENAI_API_KEY ||
-          env.OPENAI_API_KEY ||
-          "",
-        openrouterKey:
-          env.VITE_OPENROUTER_API_KEY ||
-          env.OPENROUTER_API_KEY ||
-          "",
-        universalKey:
-          env.VITE_AI_API_KEY ||
-          env.AI_API_KEY ||
-          "",
-        provider:
-          env.VITE_AI_PROVIDER ||
-          env.AI_PROVIDER ||
-          "",
-        model:
-          env.VITE_AI_MODEL ||
-          env.AI_MODEL ||
-          "",
+        geminiKey: get("VITE_GEMINI_API_KEY") || get("GEMINI_API_KEY"),
+        openaiKey: get("VITE_OPENAI_API_KEY") || get("OPENAI_API_KEY"),
+        openrouterKey: get("VITE_OPENROUTER_API_KEY") || get("OPENROUTER_API_KEY"),
+        universalKey: get("VITE_AI_API_KEY") || get("AI_API_KEY"),
+        provider: get("VITE_AI_PROVIDER") || get("AI_PROVIDER"),
+        model: get("VITE_AI_MODEL") || get("AI_MODEL"),
       }),
     },
     plugins: [
