@@ -1,6 +1,5 @@
 import { Suspense, lazy, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { AIReflectionCard } from "../components/ai/AIReflectionCard";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -10,7 +9,6 @@ import { formatCurrency } from "../lib/currency";
 import { formatDateLabel } from "../lib/date";
 import { useBudgetsStore } from "../stores/budgets.store";
 import { useSavingGoalsStore } from "../stores/saving-goals.store";
-import { useSettingsStore } from "../stores/settings.store";
 import { useTransactionsStore } from "../stores/transactions.store";
 import { useUiStore } from "../stores/ui.store";
 
@@ -45,7 +43,6 @@ export function ReportsPage() {
   const monthlyBudget = useBudgetsStore((state) => state.monthlyBudget);
   const categoryBudgets = useBudgetsStore((state) => state.categoryBudgets);
   const savingGoals = useSavingGoalsStore((state) => state.goals);
-  const settings = useSettingsStore((state) => state.settings);
   const isLoadingTransactions = useTransactionsStore((state) => state.isLoading);
   const isLoadingBudgets = useBudgetsStore((state) => state.isLoading);
   const isLoadingGoals = useSavingGoalsStore((state) => state.isLoading);
@@ -112,49 +109,49 @@ export function ReportsPage() {
       title="Laporan"
       description="Rekap bulanan yang tetap cozy, tapi angka pentingnya masih gampang dicari."
     >
-      <Card title="Atur bulan laporan" subtitle="Pilih bulan yang mau kamu lihat atau ekspor lagi.">
-        <Input
-          hint="Semua ringkasan, chart, dan file export akan mengikuti bulan ini."
-          label="Bulan laporan"
-          onChange={(event) => setSelectedMonth(event.target.value)}
-          type="month"
-          value={selectedMonth}
-        />
-      </Card>
-
       <Card
         className="px-4 py-4"
         title="Ekspor bulan ini"
-        subtitle="PDF dibuat sebagai recap bulanan yang rapi, sementara XLSX dan CSV tetap fokus ke data."
+        subtitle="Pilih bulan dulu, lalu simpan recap atau datanya dalam format yang kamu butuhin."
       >
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
-            disabled={!hasReportContent || isExportingPdf}
-            onClick={handleExportPdf}
-            variant="secondary"
-          >
-            <ExportIcon kind="pdf" />
-            {isExportingPdf ? "PDF..." : "PDF"}
-          </Button>
-          <Button
-            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
-            disabled={!hasReportContent || isExportingXlsx}
-            onClick={handleExportXlsx}
-            variant="secondary"
-          >
-            <ExportIcon kind="xlsx" />
-            {isExportingXlsx ? "XLSX..." : "XLSX"}
-          </Button>
-          <Button
-            className="min-h-[40px] gap-2 px-3.5 text-[12px]"
-            disabled={!hasReportContent || isExportingCsv}
-            onClick={handleExportCsv}
-            variant="secondary"
-          >
-            <ExportIcon kind="csv" />
-            {isExportingCsv ? "CSV..." : "CSV"}
-          </Button>
+        <div className="space-y-3">
+          <Input
+            hint="Semua ringkasan dan file export akan ikut bulan yang kamu pilih di sini."
+            label="Bulan laporan"
+            onChange={(event) => setSelectedMonth(event.target.value)}
+            type="month"
+            value={selectedMonth}
+          />
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              disabled={!hasReportContent || isExportingPdf}
+              onClick={handleExportPdf}
+              variant="secondary"
+            >
+              <ExportIcon kind="pdf" />
+              {isExportingPdf ? "PDF..." : "PDF"}
+            </Button>
+            <Button
+              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              disabled={!hasReportContent || isExportingXlsx}
+              onClick={handleExportXlsx}
+              variant="secondary"
+            >
+              <ExportIcon kind="xlsx" />
+              {isExportingXlsx ? "XLSX..." : "XLSX"}
+            </Button>
+            <Button
+              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              disabled={!hasReportContent || isExportingCsv}
+              onClick={handleExportCsv}
+              variant="secondary"
+            >
+              <ExportIcon kind="csv" />
+              {isExportingCsv ? "CSV..." : "CSV"}
+            </Button>
+          </div>
         </div>
       </Card>
 
@@ -228,72 +225,11 @@ export function ReportsPage() {
             </Card>
           </section>
 
-          <Card
-            title="Ringkasan target tabungan"
-            subtitle="Progress total target aktif atau selesai."
-          >
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between gap-2 text-[12px]">
-                  <span className="font-semibold text-[var(--text-primary)]">
-                    {reportData.savingGoalsSummary.itemLabel}
-                  </span>
-                  <span className="text-[var(--text-secondary)]">
-                    {reportData.savingGoalsSummary.targetAmount > 0
-                      ? `${Math.round(reportData.savingGoalsSummary.percentage * 100)}%`
-                      : "0%"}
-                  </span>
-                </div>
-                <div className="mt-2 h-1.5 rounded-full bg-[var(--bg-card-soft)]">
-                  <div
-                    className="h-full rounded-full bg-[linear-gradient(90deg,var(--accent-secondary),var(--accent-primary))]"
-                    style={{
-                      width: `${Math.min(
-                        Math.max(reportData.savingGoalsSummary.percentage * 100, 0),
-                        100,
-                      )}%`,
-                    }}
-                  />
-                </div>
-                <p className="mt-2 text-[11px] leading-4 text-[var(--text-secondary)]">
-                  {reportData.savingGoalsSummary.targetAmount > 0
-                    ? `${formatCurrency(reportData.savingGoalsSummary.savedAmount)} / ${formatCurrency(reportData.savingGoalsSummary.targetAmount)} sudah terkumpul.`
-                    : "Belum ada target tabungan untuk diringkas."}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                    Aktif
-                  </p>
-                  <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
-                    {reportData.savingGoalsSummary.activeCount}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--bg-card-soft)] p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                    Selesai
-                  </p>
-                  <p className="mt-1 text-[13px] font-bold text-[var(--text-primary)]">
-                    {reportData.savingGoalsSummary.completedCount}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <AIReflectionCard
-            activeCharacterId={settings?.activeCharacterId}
-            month={selectedMonth}
-            transactions={monthTransactions}
-            aiEnabled={settings?.aiEnabled ?? false}
-          />
-
           <Suspense
             fallback={
               <Card
-                title="Menyiapkan chart"
-                subtitle="Bagian visualnya lagi dibuka dulu biar halaman awal tetap ringan."
+                title="Menyiapkan panel laporan"
+                subtitle="Panel kategori, tren, atau budget lagi dibuka dulu biar tetap ringan."
               >
                 <div className="h-52 animate-pulse rounded-2xl bg-[var(--bg-card-soft)]" />
               </Card>

@@ -8,6 +8,7 @@
 
 :root {
   color-scheme: light;
+  --app-stable-vh: 100vh;
 
   /* Typography scale */
   --font-size-page-title: clamp(2.4rem, 8vw, 3.2rem);
@@ -104,6 +105,18 @@
   --mascot-cheek: rgba(232, 123, 123, 0.55);
 }
 
+@supports (height: 100svh) {
+  :root {
+    --app-stable-vh: 100svh;
+  }
+}
+
+@supports (height: 100lvh) {
+  :root {
+    --app-stable-vh: 100lvh;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -155,7 +168,19 @@ textarea,
 }
 
 #root {
-  min-height: 100dvh;
+  min-height: var(--app-stable-vh);
+}
+
+.app-shell-min-height {
+  min-height: var(--app-stable-vh);
+}
+
+.app-background-layer {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: var(--app-stable-vh);
+  overflow: hidden;
 }
 
 .ui-page-title {
