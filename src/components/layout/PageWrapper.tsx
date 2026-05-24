@@ -56,10 +56,10 @@ export function PageWrapper({
   const overlayAlphaStrong = Math.min(0.92, overlayAlpha + 0.16);
 
   return (
-    <div className="min-h-dvh overflow-x-clip bg-[var(--bg-main)] text-[var(--text-primary)]">
+    <div className="app-shell-min-height overflow-x-clip bg-[var(--bg-main)] text-[var(--text-primary)]">
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+        className="app-background-layer pointer-events-none z-0"
       >
         {backgroundUrl ? (
           <div
@@ -90,7 +90,7 @@ export function PageWrapper({
       </div>
 
       <div
-        className="relative z-10 mx-auto flex min-h-dvh w-full max-w-[480px] flex-col px-4 pt-5"
+        className="app-shell-min-height relative z-10 mx-auto flex w-full max-w-[480px] flex-col px-4 pt-5"
         style={{
           paddingBottom: `calc(env(safe-area-inset-bottom) + ${bottomPadding}px)`,
         }}
