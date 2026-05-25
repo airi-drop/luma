@@ -1,68 +1,96 @@
 # Luma
 
-AI-powered personal finance tracker focused on ultra-fast transaction input, intelligent parsing, and modern mobile-first UX.
+Modern AI-assisted personal finance tracker built for fast daily logging, smart transaction parsing, and clean mobile-first UX.
 
-## Features
+Luma combines deterministic local parsing with optional AI refinement to create a reliable, lightweight, and privacy-friendly finance experience.
 
-- AI-assisted transaction parsing
-- Natural language expense input
-- Smart category detection
-- Account detection
-- Mobile-first dashboard
-- Fast manual transaction flow
-- Offline-friendly architecture
-- Responsive PWA support
-- Local-first experience
-- Lightweight and fast UI
+---
 
-## Example Inputs
+## ✨ Features
 
-```txt
+- Smart natural language transaction input
+- Hybrid AI-assisted parsing
+- Local-first architecture
+- Fast mobile-first dashboard
+- Expense & income tracking
+- Saving goals
+- Budget tracking
+- Behavioral finance insights
+- Offline-friendly experience
+- PWA support
+- CSV/XLSX export
+- Customizable appearance/backgrounds
+
+---
+
+## 🧠 Smart Parsing Examples
+
+````txt
 makan bakso 25rb
 spotify 55k bca
 isi bensin 100rb
-token listrik 200rb
 gaji 5jt
+token listrik 200rb
 
 Luma automatically extracts:
 
 amount
 category
-transaction type
 account
+transaction type
 description
-Tech Stack
+⚡ AI Architecture
+
+Luma uses a hybrid local-first parsing system.
+
+Parsing Flow
+Local heuristic parser runs first
+Optional AI refinement runs if provider is available
+If AI fails, local parsing result is still used safely
+
+This approach provides:
+
+faster parsing
+better reliability
+offline usability
+lower AI cost
+graceful fallback behavior
+📊 Reports & Insights
+Expense breakdown
+Monthly summaries
+Behavioral spending insights
+Saving progress tracking
+Exportable reports
+
+AI insights are generated from aggregate finance data with controlled prompt validation.
+
+🛠 Tech Stack
+Frontend
 React
 TypeScript
 Vite
 TailwindCSS
+State & Storage
 Zustand
+IndexedDB
+Deployment
 Vercel
-AI Parsing System
-
-Luma uses a hybrid parsing architecture:
-
-Deterministic local parser (primary)
-AI provider fallback (optional)
-Manual correction flow
-
-This approach improves:
-
-speed
-reliability
-offline usability
-cost efficiency
-Project Structure
+Optional AI Providers
+Gemini
+OpenAI
+OpenRouter
+📁 Project Structure
 src/
- ├── components/
- ├── features/
- ├── hooks/
- ├── pages/
- ├── services/
- ├── store/
- ├── utils/
- └── types/
-Development
+├── app/
+├── components/
+├── db/
+├── features/
+├── hooks/
+├── pages/
+├── stores/
+├── types/
+└── utils/
+🚀 Development
 
 Install dependencies:
 
@@ -83,38 +111,220 @@ npm run build
 Preview production build:
 
 npm run preview
-Environment Variables
-VITE_GEMINI_API_KEY=your_api_key
+🔐 Environment Variables
 
-Optional depending on provider configuration.
+Optional AI configuration:
 
-Deployment
+VITE_GEMINI_API_KEY=your_key
+VITE_OPENAI_API_KEY=your_key
+VITE_OPENROUTER_API_KEY=your_key
 
-Recommended deployment platform:
+Local parsing still works without AI providers.
 
-Vercel
+📱 PWA Support
 
-Production build is optimized for:
+Luma is designed as a mobile-first Progressive Web App with:
 
-static deployment
-edge delivery
-mobile performance
-Design Philosophy
+installable experience
+offline-friendly behavior
+responsive layout
+touch-optimized navigation
+🎯 Design Philosophy
 
 Luma focuses on:
 
 ultra-fast input
-low friction UX
-mobile-first interactions
-AI-assisted productivity
-minimal cognitive load
-Current Status
+low cognitive load
+practical daily usability
+clean mobile UX
+graceful AI assistance
+reliable local-first behavior
+🧪 Production Hardening
 
-Active development.
+Recent improvements include:
 
-Core transaction flow and AI parsing are functional.
-Additional analytics and advanced finance modules are planned.
+spreadsheet export sanitization
+memory leak fixes
+repository-level validation
+safer AI fallback handling
+improved runtime stability
+optimized transaction rendering
+better mobile readability
+📌 Current Status
 
-License
+Luma is currently in active development.
+
+Core finance tracking, smart parsing, reports, and AI-assisted workflows are functional and continuously improving.
+
+📄 License
 
 MIT
+
+ini tampilannya jadi jelek ga kalo udah di copy
+
+Iya, kalau lu copas yang tadi langsung ke GitHub README kadang bisa agak berantakan karena gw tadi campur markdown sama format chat/code internal.
+
+Ini gw bikinin versi clean GitHub-ready yang aman langsung paste ke README.md tanpa rusak tampilannya:
+
+# Luma
+
+Modern AI-assisted personal finance tracker built for fast daily logging, smart transaction parsing, and clean mobile-first UX.
+
+Luma combines deterministic local parsing with optional AI refinement to create a reliable, lightweight, and privacy-friendly finance experience.
+
+---
+
+## ✨ Features
+
+- Smart natural language transaction input
+- Hybrid AI-assisted parsing
+- Local-first architecture
+- Fast mobile-first dashboard
+- Expense & income tracking
+- Saving goals
+- Budget tracking
+- Behavioral finance insights
+- Offline-friendly experience
+- PWA support
+- CSV/XLSX export
+- Customizable appearance/backgrounds
+
+---
+
+## 🧠 Smart Parsing Examples
+
+```txt
+makan bakso 25rb
+spotify 55k bca
+isi bensin 100rb
+gaji 5jt
+token listrik 200rb
+
+Luma automatically extracts:
+
+amount
+category
+account
+transaction type
+description
+⚡ AI Architecture
+
+Luma uses a hybrid local-first parsing system.
+
+Parsing Flow
+Local heuristic parser runs first
+Optional AI refinement runs if provider is available
+If AI fails, local parsing result is still used safely
+
+This approach provides:
+
+faster parsing
+better reliability
+offline usability
+lower AI cost
+graceful fallback behavior
+📊 Reports & Insights
+Expense breakdown
+Monthly summaries
+Behavioral spending insights
+Saving progress tracking
+Exportable reports
+
+AI insights are generated from aggregate finance data with controlled prompt validation.
+
+🛠 Tech Stack
+Frontend
+React
+TypeScript
+Vite
+TailwindCSS
+State & Storage
+Zustand
+IndexedDB
+Deployment
+Vercel
+Optional AI Providers
+Gemini
+OpenAI
+OpenRouter
+📁 Project Structure
+src/
+├── app/
+├── components/
+├── db/
+├── features/
+├── hooks/
+├── pages/
+├── stores/
+├── types/
+└── utils/
+🚀 Development
+
+Install dependencies:
+
+npm install
+
+Run development server:
+
+npm run dev
+
+Run lint:
+
+npm run lint
+
+Build production:
+
+npm run build
+
+Preview production build:
+
+npm run preview
+🔐 Environment Variables
+
+Optional AI configuration:
+
+VITE_GEMINI_API_KEY=your_key
+VITE_OPENAI_API_KEY=your_key
+VITE_OPENROUTER_API_KEY=your_key
+
+Local parsing still works without AI providers.
+
+📱 PWA Support
+
+Luma is designed as a mobile-first Progressive Web App with:
+
+installable experience
+offline-friendly behavior
+responsive layout
+touch-optimized navigation
+🎯 Design Philosophy
+
+Luma focuses on:
+
+ultra-fast input
+low cognitive load
+practical daily usability
+clean mobile UX
+graceful AI assistance
+reliable local-first behavior
+🧪 Production Hardening
+
+Recent improvements include:
+
+spreadsheet export sanitization
+memory leak fixes
+repository-level validation
+safer AI fallback handling
+optimized transaction rendering
+improved runtime stability
+better mobile readability
+📌 Current Status
+
+Luma is currently in active development.
+
+Core finance tracking, smart parsing, reports, and AI-assisted workflows are functional and continuously improving.
+
+📄 License
+
+MIT
+````
