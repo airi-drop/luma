@@ -1,8 +1,6 @@
 import { useState } from "react";
 import type { ParseResult } from "../../features/ai/types";
-import { aiUsageRepo } from "../../db/repositories/ai-usage.repo";
 import { formatCurrency } from "../../lib/currency";
-import { getMonthFromDate } from "../../lib/date";
 import { useBudgetsStore } from "../../stores/budgets.store";
 import { useTransactionsStore } from "../../stores/transactions.store";
 import { useUiStore } from "../../stores/ui.store";
@@ -50,6 +48,8 @@ export function AIParsePreviewSheet({
     return null;
   }
 
+  const parsedResult = result;
+
   async function handleSubmit(input: ManualTransactionFormInput) {
     setIsSubmitting(true);
 
@@ -60,14 +60,11 @@ export function AIParsePreviewSheet({
       });
       await refreshBudgets(currentMonth);
 
-      try {
-        await aiUsageRepo.incrementInput(getMonthFromDate(input.date));
-      } catch (error) {
-        console.warn("Gagal update AI usage:", error);
-      }
-
       showToast({
-        message: "Tercatat dari AI ✨",
+        message:
+          parsedResult.pipeline === "ai-refined"
+            ? "Tercatat dari AI-assisted parser ✨"
+            : "Tercatat dari smart parser ✨",
         tone: "success",
       });
       onSaved();
@@ -96,7 +93,12 @@ export function AIParsePreviewSheet({
               Preview nominal
             </p>
             <p className="mt-2 font-display text-[28px] font-bold text-[var(--accent-primary)]">
-              {formatCurrency(result.nominal)}
+              {formatCurrency(parsedResult.nominal)}
+            </p>
+            <p className="mt-1 text-[12px] leading-5 text-[var(--text-secondary)]">
+              {parsedResult.pipeline === "ai-refined"
+                ? "Parser lokal sudah dibantu refine AI."
+                : "Hasil ini datang dari parser lokal yang bisa kamu cek dulu."}
             </p>
           </div>
           <span
@@ -105,20 +107,20 @@ export function AIParsePreviewSheet({
               getConfidenceTone(result.confidence),
             ].join(" ")}
           >
-            Confidence: {Math.round(result.confidence * 100)}%
+            Confidence: {Math.round(parsedResult.confidence * 100)}%
           </span>
         </div>
 
         <ManualTransactionForm
           initialValues={{
-            nominal: result.nominal,
-            detail: result.detail,
-            category: result.category,
-            account: result.account,
-            date: result.date,
+            nominal: parsedResult.nominal,
+            detail: parsedResult.detail,
+            category: parsedResult.category,
+            account: parsedResult.account,
+            date: parsedResult.date,
           }}
           isSubmitting={isSubmitting}
-          key={`${originalText}-${result.nominal}-${result.date ?? "today"}`}
+          key={`${originalText}-${parsedResult.nominal}-${parsedResult.date ?? "today"}`}
           submitLabel="Simpan ✨"
           onSubmit={handleSubmit}
         />

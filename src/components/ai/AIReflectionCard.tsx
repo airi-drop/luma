@@ -113,7 +113,7 @@ export function AIReflectionCard({
 
   return (
     <Card
-      title="Refleksi AI"
+      title="Refleksi AI-assisted"
       subtitle={`Bacaan pola halus untuk ${formatMonthLabel(month).toLowerCase()} tanpa bikin halaman ini terasa berat.`}
       className="bg-[linear-gradient(160deg,rgba(var(--overlay-glow-primary),0.16),rgba(var(--overlay-glow-secondary),0.10))]"
     >

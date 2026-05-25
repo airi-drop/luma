@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import type { BackgroundAsset, UserSettings } from "../../types";
 
 interface BackgroundCustomizerProps {
@@ -191,6 +191,19 @@ interface BackgroundItemProps {
   onRemove: (backgroundId: string) => Promise<void>;
 }
 
+function useObjectUrl(blob: Blob) {
+  const objectUrl = useMemo(() => URL.createObjectURL(blob), [blob]);
+
+  useEffect(
+    () => () => {
+      URL.revokeObjectURL(objectUrl);
+    },
+    [objectUrl],
+  );
+
+  return objectUrl;
+}
+
 function getDisplayName(name: string) {
   // Hilangkan prefix "Default_" yang dihasilkan AI generator dan
   // potong jadi judul singkat manusiawi.
@@ -216,10 +229,7 @@ function BackgroundItem({
 }: BackgroundItemProps) {
   // JANGAN pakai useEffect cleanup revokeObjectURL — bikin thumbnail rusak
   // saat parent re-render. Browser akan release URL saat tab ditutup.
-  const previewUrl = useMemo(
-    () => URL.createObjectURL(background.blob),
-    [background.blob],
-  );
+  const previewUrl = useObjectUrl(background.blob);
 
   const displayName = getDisplayName(background.name);
 
@@ -239,13 +249,15 @@ function BackgroundItem({
         className="relative block w-full"
       >
         <div className="aspect-[4/3] w-full overflow-hidden bg-[var(--bg-card)]">
-          <img
-            src={previewUrl}
-            alt={displayName}
-            className="h-full w-full object-cover"
-            decoding="async"
-            loading="lazy"
-          />
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt={displayName}
+              className="h-full w-full object-cover"
+              decoding="async"
+              loading="lazy"
+            />
+          ) : null}
         </div>
         {active ? (
           <span className="absolute right-1.5 top-1.5 rounded-full bg-[var(--accent-primary)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--text-on-accent)] shadow-sm">

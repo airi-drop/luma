@@ -18,6 +18,7 @@ export interface ParseResult {
   category: CategoryType;
   date?: string;
   confidence: number;
+  pipeline: "local" | "ai-refined" | "local-fallback";
 }
 
 export type AIErrorCode =

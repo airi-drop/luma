@@ -45,7 +45,7 @@ function DataBootstrap() {
 
   // Dev helpers: panggil dari DevTools console.
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === "undefined" || !import.meta.env.DEV) {
       return;
     }
 

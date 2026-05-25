@@ -4,8 +4,11 @@ import {
   type AccountType,
   type CategoryType,
 } from "../../types";
-import { getCurrentDate } from "../../lib/date";
-import type { ParseResult } from "./types";
+import { aiUsageRepo } from "../../db/repositories/ai-usage.repo";
+import { getCurrentDate, getMonthFromDate } from "../../lib/date";
+import { aiGenerate, getAiRefinementAvailability } from "./aiProvider";
+import { buildParserPrompt } from "./prompt";
+import type { ParseResult, ParserDraft } from "./types";
 import { AIError } from "./types";
 
 const accountSynonyms: Record<AccountType, string[]> = {
@@ -517,15 +520,111 @@ function parseWithHeuristics(text: string): ParseResult {
     account,
     date,
     confidence: clampConfidence(confidence),
+    pipeline: "local",
   };
 }
 
-export async function parseUserText(text: string): Promise<ParseResult> {
+function parseProviderResponse(raw: string): ParserDraft {
+  const trimmed = raw.trim();
+  const normalized =
+    trimmed.match(/^\s*```(?:json)?\s*\n([\s\S]*?)\n```\s*$/i)?.[1] ?? trimmed;
+
+  try {
+    return JSON.parse(normalized) as ParserDraft;
+  } catch {
+    throw new AIError("PARSE_FAILED");
+  }
+}
+
+function mergeRefinedResult(fallback: ParseResult, draft: ParserDraft): ParseResult {
+  const detail =
+    typeof draft.detail === "string" && draft.detail.trim()
+      ? toTitleCase(draft.detail).slice(0, 120)
+      : fallback.detail;
+
+  const nominal = (() => {
+    try {
+      return draft.nominal === undefined ? fallback.nominal : normalizeAmount(draft.nominal);
+    } catch {
+      return fallback.nominal;
+    }
+  })();
+
+  const account =
+    draft.account === undefined
+      ? fallback.account
+      : snapEnum(draft.account, ACCOUNT_TYPES, accountSynonyms);
+  const category =
+    draft.category === undefined
+      ? fallback.category
+      : snapEnum(draft.category, CATEGORY_TYPES, categorySynonyms);
+  const date = normalizeDate(draft.date) ?? fallback.date;
+  const confidence = clampConfidence(
+    typeof draft.confidence === "number"
+      ? Math.max(draft.confidence, fallback.confidence)
+      : fallback.confidence,
+  );
+
+  return {
+    detail,
+    nominal,
+    account,
+    category,
+    date,
+    confidence,
+    pipeline: "ai-refined",
+  };
+}
+
+async function refineWithAi(text: string, fallback: ParseResult) {
+  const raw = await aiGenerate({
+    prompt: buildParserPrompt(text),
+    timeoutMs: 9000,
+  });
+
+  return mergeRefinedResult(fallback, parseProviderResponse(raw));
+}
+
+export async function parseUserText(
+  text: string,
+  options?: {
+    allowAiRefinement?: boolean;
+  },
+): Promise<ParseResult> {
   const trimmed = text.trim();
 
   if (!trimmed) {
     throw new AIError("EMPTY_INPUT");
   }
 
-  return parseWithHeuristics(trimmed);
+  const localResult = parseWithHeuristics(trimmed);
+
+  if (!options?.allowAiRefinement) {
+    return localResult;
+  }
+
+  const availability = getAiRefinementAvailability();
+
+  if (!availability.available) {
+    return localResult;
+  }
+
+  try {
+    const refinedResult = await refineWithAi(trimmed, localResult);
+
+    try {
+      await aiUsageRepo.incrementInput(
+        getMonthFromDate(localResult.date ?? getCurrentDate()),
+      );
+    } catch (error) {
+      console.warn("Gagal mencatat penggunaan AI parser:", error);
+    }
+
+    return refinedResult;
+  } catch {
+    return {
+      ...localResult,
+      pipeline: "local-fallback",
+    };
+  }
 }

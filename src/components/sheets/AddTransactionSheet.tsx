@@ -78,7 +78,7 @@ export function AddTransactionSheet() {
   return (
     <>
       <BottomSheet
-        description="Manual tetap jadi default. AI ada di tab kedua kalau kamu mau input lebih cepat."
+        description="Manual tetap jadi default. Smart parser ada di tab kedua kalau kamu mau input lebih cepat."
         isOpen={activeBottomSheet === "add-transaction"}
         onClose={handleCloseSheet}
         title="Tambah Transaksi"
@@ -109,7 +109,7 @@ export function AddTransactionSheet() {
               onClick={() => setActiveTab("ai")}
               type="button"
             >
-              AI Cepat
+              Smart parser
             </button>
           </div>
 

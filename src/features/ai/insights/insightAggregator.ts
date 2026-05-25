@@ -11,6 +11,7 @@ import type {
   AggregatedMonthlyInsightData,
   InsightCategoryChange,
   InsightSignal,
+  NightInsightSource,
 } from "./types";
 
 function isWeekend(date: string) {
@@ -19,14 +20,58 @@ function isWeekend(date: string) {
   return day === 0 || day === 6;
 }
 
-function getCreatedHour(createdAt: string) {
-  const parsed = new Date(createdAt);
+function getTransactionHour(transaction: Transaction) {
+  const record = transaction as Transaction & {
+    transactionTime?: string;
+    time?: string;
+    spentAt?: string;
+    transactionDateTime?: string;
+    occurredAt?: string;
+  };
 
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
+  const explicitDateTime =
+    record.transactionDateTime ?? record.spentAt ?? record.occurredAt;
+
+  if (typeof explicitDateTime === "string" && explicitDateTime.trim()) {
+    const parsed = new Date(explicitDateTime);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      return {
+        hour: parsed.getHours(),
+        source: "transaction-datetime" as const,
+      };
+    }
   }
 
-  return parsed.getHours();
+  const explicitTime = record.transactionTime ?? record.time;
+
+  if (typeof explicitTime === "string") {
+    const match = explicitTime.trim().match(/^(\d{1,2}):(\d{2})$/);
+
+    if (match) {
+      const hour = Number(match[1]);
+      const minute = Number(match[2]);
+
+      if (
+        Number.isFinite(hour) &&
+        Number.isFinite(minute) &&
+        hour >= 0 &&
+        hour <= 23 &&
+        minute >= 0 &&
+        minute <= 59
+      ) {
+        return {
+          hour,
+          source: "transaction-time" as const,
+        };
+      }
+    }
+  }
+
+  return {
+    hour: null,
+    source: "none" as NightInsightSource,
+  };
 }
 
 function isNightHour(hour: number | null) {
@@ -159,6 +204,7 @@ function buildSignals(params: {
 
   if (
     transactionCount >= AI_INSIGHT_MIN_TRANSACTIONS &&
+    night.source !== "none" &&
     night.transactionCount >= 3 &&
     (night.shareOfTransactions >= 0.35 || night.shareOfSpending >= 0.35)
   ) {
@@ -261,9 +307,19 @@ export function buildInsightAggregate(params: {
   const weekendTransactions = transactions.filter((transaction) =>
     isWeekend(transaction.date),
   );
-  const nightTransactions = transactions.filter((transaction) =>
-    isNightHour(getCreatedHour(transaction.createdAt)),
+  const timedTransactions = transactions
+    .map((transaction) => ({
+      transaction,
+      timing: getTransactionHour(transaction),
+    }))
+    .filter((item) => item.timing.hour !== null);
+  const nightTransactions = timedTransactions
+    .filter((item) => isNightHour(item.timing.hour))
+    .map((item) => item.transaction);
+  const timedTotal = getMonthlyTotal(
+    timedTransactions.map((item) => item.transaction),
   );
+  const nightSource = timedTransactions[0]?.timing.source ?? "none";
   const smallTransactions = transactions.filter(
     (transaction) => transaction.nominal <= AI_INSIGHT_SMALL_TRANSACTION_THRESHOLD,
   );
@@ -294,10 +350,12 @@ export function buildInsightAggregate(params: {
       transactionCount: nightTransactions.length,
       total: getMonthlyTotal(nightTransactions),
       shareOfTransactions:
-        transactions.length > 0 ? nightTransactions.length / transactions.length : 0,
+        timedTransactions.length > 0
+          ? nightTransactions.length / timedTransactions.length
+          : 0,
       shareOfSpending:
-        totalSpending > 0 ? getMonthlyTotal(nightTransactions) / totalSpending : 0,
-      source: "createdAt" as const,
+        timedTotal > 0 ? getMonthlyTotal(nightTransactions) / timedTotal : 0,
+      source: nightSource,
     },
     moods: buildMoodSummaries(transactions),
     smallTransactions: {
