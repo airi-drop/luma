@@ -1,11 +1,12 @@
 import { formatCurrency } from "../../lib/currency";
 import { formatDateLabel } from "../../lib/date";
 import { downloadBlob, getExportData } from "./export-data";
+import { sanitizeSpreadsheetCell } from "./spreadsheet";
 
 export async function exportMonthlySpreadsheetCsv(month: string) {
   const { transactions, budgets, savingGoals, reportData } = await getExportData(month);
   const rows = [
-    ["Section", "Field 1", "Field 2", "Field 3", "Field 4", "Field 5", "Field 6"],
+    ["Section", "Field 1", "Field 2", "Field 3", "Field 4", "Field 5", "Field 6", "Field 7"],
     [
       "Summary",
       reportData.monthLabel,
@@ -17,7 +18,7 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
       reportData.biggestTransaction?.detail ?? "Belum ada",
       `${reportData.savingGoalsSummary.activeCount} aktif / ${reportData.savingGoalsSummary.completedCount} selesai`,
     ],
-    ["Transactions", "Tanggal", "Detail", "Nominal", "Kategori", "Akun", "Mood"],
+    ["Transactions", "Tanggal", "Detail", "Nominal", "Kategori", "Akun", "Mood", "Catatan"],
     ...transactions.map((transaction) => [
       "Transaction",
       formatDateLabel(transaction.date),
@@ -26,8 +27,9 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
       transaction.category,
       transaction.account,
       transaction.mood ?? "",
+      transaction.note ?? "",
     ]),
-    ["Budgets", "Jenis", "Kategori", "Limit", "Terpakai", "Sisa", ""],
+    ["Budgets", "Jenis", "Kategori", "Limit", "Terpakai", "Sisa", "", ""],
     ...budgets.map((budget) => {
       if (budget.kind === "monthly") {
         return [
@@ -37,6 +39,7 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
           budget.totalBudget.toString(),
           reportData.totalSpending.toString(),
           (budget.totalBudget - reportData.totalSpending).toString(),
+          "",
           "",
         ];
       }
@@ -53,9 +56,10 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
         used.toString(),
         (budget.limit - used).toString(),
         "",
+        "",
       ];
     }),
-    ["Saving Goals", "Judul", "Status", "Terkumpul", "Target", "Deadline", ""],
+    ["Saving Goals", "Judul", "Status", "Terkumpul", "Target", "Deadline", "Catatan", ""],
     ...savingGoals.map((goal) => [
       "Saving Goal",
       goal.title,
@@ -63,6 +67,7 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
       goal.currentAmount.toString(),
       goal.targetAmount.toString(),
       goal.deadline ?? "",
+      goal.note ?? "",
       "",
     ]),
   ];
@@ -70,7 +75,10 @@ export async function exportMonthlySpreadsheetCsv(month: string) {
   const csv = rows
     .map((row) =>
       row
-        .map((value) => `"${String(value).replace(/"/g, '""')}"`)
+        .map(
+          (value) =>
+            `"${String(sanitizeSpreadsheetCell(value)).replace(/"/g, '""')}"`,
+        )
         .join(","),
     )
     .join("\n");

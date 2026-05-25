@@ -96,7 +96,7 @@ function NavItemLink({ item }: { item: NavItem }) {
       to={item.to}
       className={({ isActive }) =>
         [
-          "group relative flex h-11 w-[60px] flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors duration-200 motion-reduce:transition-none",
+          "group relative flex h-11 w-[64px] flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition-colors duration-200 motion-reduce:transition-none",
           isActive
             ? "text-[var(--accent-primary)]"
             : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]",

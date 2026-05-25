@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TransactionDetailSheet } from "../components/sheets/TransactionDetailSheet";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
@@ -94,10 +94,7 @@ function compareTransactions(left: Transaction, right: Transaction, sort: SortOp
   );
 }
 
-function groupTransactionsByMonth(
-  transactions: Transaction[],
-  sort: SortOption,
-) {
+function groupTransactionsByMonth(transactions: Transaction[], sort: SortOption) {
   const groups = transactions.reduce<Record<string, Transaction[]>>(
     (accumulator, transaction) => {
       if (!accumulator[transaction.month]) {
@@ -114,9 +111,7 @@ function groupTransactionsByMonth(
     .sort(([leftMonth], [rightMonth]) => rightMonth.localeCompare(leftMonth))
     .map(([month, items]) => ({
       month,
-      items: [...items].sort((left, right) =>
-        compareTransactions(left, right, sort),
-      ),
+      items: [...items].sort((left, right) => compareTransactions(left, right, sort)),
       total: items.reduce((sum, item) => sum + item.nominal, 0),
     }));
 }
@@ -135,34 +130,64 @@ export function TransactionsPage() {
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(
     null,
   );
+  const [visibleCount, setVisibleCount] = useState(120);
 
   useEffect(() => {
     void loadAll();
   }, [loadAll]);
 
-  const selectedTransaction =
-    allItems.find((item) => item.id === selectedTransactionId) ?? null;
+  const selectedTransaction = useMemo(
+    () => allItems.find((item) => item.id === selectedTransactionId) ?? null,
+    [allItems, selectedTransactionId],
+  );
 
   const normalizedQuery = query.trim().toLowerCase();
-  const filteredItems = allItems.filter((item) => {
-    const matchesQuery = normalizedQuery
-      ? item.detail.toLowerCase().includes(normalizedQuery)
-      : true;
-    const matchesCategory = selectedCategory
-      ? item.category === (selectedCategory as CategoryType)
-      : true;
-    const matchesAccount = selectedAccount
-      ? item.account === (selectedAccount as AccountType)
-      : true;
+  const filteredItems = useMemo(
+    () =>
+      allItems.filter((item) => {
+        const matchesQuery = normalizedQuery
+          ? item.detail.toLowerCase().includes(normalizedQuery)
+          : true;
+        const matchesCategory = selectedCategory
+          ? item.category === (selectedCategory as CategoryType)
+          : true;
+        const matchesAccount = selectedAccount
+          ? item.account === (selectedAccount as AccountType)
+          : true;
 
-    return matchesQuery && matchesCategory && matchesAccount;
-  });
-
-  const groupedItems = groupTransactionsByMonth(filteredItems, sortOption);
-  const filteredTotal = filteredItems.reduce(
-    (sum, transaction) => sum + transaction.nominal,
-    0,
+        return matchesQuery && matchesCategory && matchesAccount;
+      }),
+    [allItems, normalizedQuery, selectedAccount, selectedCategory],
   );
+  const groupedItems = useMemo(
+    () => groupTransactionsByMonth(filteredItems, sortOption),
+    [filteredItems, sortOption],
+  );
+  const filteredTotal = useMemo(
+    () => filteredItems.reduce((sum, transaction) => sum + transaction.nominal, 0),
+    [filteredItems],
+  );
+  const visibleGroups = useMemo(() => {
+    const visibleIds = new Set(
+      groupedItems
+        .flatMap((group) => group.items)
+        .slice(0, visibleCount)
+        .map((item) => item.id),
+    );
+
+    return groupedItems
+      .map((group) => {
+        const items = group.items.filter((item) => visibleIds.has(item.id));
+
+        return {
+          ...group,
+          items,
+          total: items.reduce((sum, item) => sum + item.nominal, 0),
+        };
+      })
+      .filter((group) => group.items.length > 0);
+  }, [groupedItems, visibleCount]);
+  const hasMoreItems = filteredItems.length > visibleCount;
   const activeCharacter = getCharacterById(settings?.activeCharacterId);
   const emptyStateLine =
     getCharacterCompanionLine(settings?.activeCharacterId, "transactionsEmpty") ??
@@ -177,21 +202,30 @@ export function TransactionsPage() {
         <div className="space-y-2.5">
           <Input
             label="Cari detail"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setVisibleCount(120);
+            }}
             placeholder="Misal: kopi, bensin, album"
             value={query}
           />
           <div className="grid grid-cols-2 gap-2">
             <FilterSelect
               label="Kategori"
-              onChange={setSelectedCategory}
+              onChange={(value) => {
+                setSelectedCategory(value);
+                setVisibleCount(120);
+              }}
               options={CATEGORY_TYPES}
               placeholder="Semua"
               value={selectedCategory}
             />
             <FilterSelect
               label="Akun"
-              onChange={setSelectedAccount}
+              onChange={(value) => {
+                setSelectedAccount(value);
+                setVisibleCount(120);
+              }}
               options={ACCOUNT_TYPES}
               placeholder="Semua"
               value={selectedAccount}
@@ -199,7 +233,10 @@ export function TransactionsPage() {
           </div>
           <FilterSelect
             label="Urutkan"
-            onChange={(value) => setSortOption(value as SortOption)}
+            onChange={(value) => {
+              setSortOption(value as SortOption);
+              setVisibleCount(120);
+            }}
             options={["terbaru", "terlama", "terbesar", "terkecil"]}
             placeholder="Pilih urutan"
             value={sortOption}
@@ -247,7 +284,7 @@ export function TransactionsPage() {
           <p className="text-[12px] leading-5 text-[var(--danger-soft)]">{error}</p>
         ) : filteredItems.length > 0 ? (
           <div className="space-y-3">
-            {groupedItems.map((group) => (
+            {visibleGroups.map((group) => (
               <section key={group.month} className="space-y-1.5">
                 <div className="flex items-end justify-between gap-2">
                   <div>
@@ -269,28 +306,28 @@ export function TransactionsPage() {
                       type="button"
                     >
                       <div className="min-w-0 flex-1 space-y-1">
-                        <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
+                        <p className="truncate text-[14px] font-semibold text-[var(--text-primary)]">
                           {transaction.detail}
                         </p>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-[var(--text-secondary)]">
-                          <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[9px] font-semibold text-[var(--accent-primary)]">
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+                          <span className="rounded-full bg-[var(--accent-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent-primary)]">
                             {transaction.category}
                           </span>
                           <span>{transaction.account}</span>
                           {transaction.mood ? <span>{transaction.mood}</span> : null}
                         </div>
-                        <p className="text-[10px] text-[var(--text-muted)]">
+                        <p className="text-[11px] leading-5 text-[var(--text-muted)]">
                           {formatDateLabel(transaction.date)}
-                          {transaction.note ? ` - ${transaction.note}` : ""}
+                          {transaction.note ? ` · ${transaction.note}` : ""}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="text-[14px] font-bold text-[var(--text-primary)]">
+                        <p className="text-[15px] font-bold text-[var(--text-primary)]">
                           {formatCurrency(transaction.nominal)}
                         </p>
                         <span
                           aria-hidden="true"
-                          className="mt-1 inline-flex text-[11px] text-[var(--text-muted)]"
+                          className="mt-1 inline-flex text-[12px] text-[var(--text-muted)]"
                         >
                           ›
                         </span>
@@ -300,13 +337,22 @@ export function TransactionsPage() {
                 </div>
               </section>
             ))}
+            {hasMoreItems ? (
+              <Button
+                fullWidth
+                onClick={() => setVisibleCount((current) => current + 120)}
+                variant="secondary"
+              >
+                Tampilkan lebih banyak
+              </Button>
+            ) : null}
           </div>
         ) : (
           <div className="space-y-3">
             <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
               {emptyStateLine}
             </p>
-            <p className="text-[10px] leading-4 text-[var(--text-muted)]">
+            <p className="text-[11px] leading-5 text-[var(--text-muted)]">
               {activeCharacter.name} siap nemenin kalau kamu mau mulai dari satu transaksi dulu.
             </p>
             <Button fullWidth onClick={() => openBottomSheet("add-transaction")}>

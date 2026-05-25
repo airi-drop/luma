@@ -225,7 +225,7 @@ export function SettingsPage() {
           onToggle={() => setOpenSection(openSection === "ai" ? null : "ai")}
           summary={
             settings.aiEnabled
-              ? "Aktif untuk input cepat dan refleksi"
+              ? "Aktif untuk refine parser dan refleksi"
               : "Masih dimatikan dulu"
           }
           title="Bantuan AI"
@@ -236,7 +236,7 @@ export function SettingsPage() {
                 Bantuan AI
               </p>
               <p className="text-[11px] leading-4 text-[var(--text-secondary)]">
-                AI bisa bantu baca input cepat dan bikin refleksi bulanan. Kalau lagi dimatiin, catatan manualmu tetap jalan seperti biasa.
+                Smart parser lokal tetap siap dipakai. Kalau bantuan AI dinyalakan dan provider tersedia, hasil parser bisa dirapihin lagi dan refleksi bulanan ikut aktif.
               </p>
             </div>
             <button

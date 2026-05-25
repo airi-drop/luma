@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { getLumaDb } from "../client";
 import { nowIso } from "../../lib/date";
+import { isValidTransactionDate } from "../../lib/transaction-validation";
 import type {
   AddSavingContributionInput,
   CreateSavingGoalInput,
@@ -15,11 +16,47 @@ function sortGoals(goals: SavingGoal[]) {
   );
 }
 
+function assertNonEmptyTitle(title: string) {
+  if (!title.trim()) {
+    throw new Error("Judul target tabungan masih kosong.");
+  }
+}
+
+function assertFiniteAmount(value: number, label: string, allowZero = true) {
+  if (!Number.isFinite(value) || value < 0 || (!allowZero && value === 0)) {
+    throw new Error(`${label} harus angka valid dan tidak boleh negatif.`);
+  }
+}
+
+function assertOptionalDate(date?: string) {
+  if (date && !isValidTransactionDate(date)) {
+    throw new Error("Tanggal target belum valid.");
+  }
+}
+
+function normalizeGoalPayload(params: {
+  title: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string;
+}) {
+  assertNonEmptyTitle(params.title);
+  assertFiniteAmount(params.targetAmount, "Target tabungan", false);
+  assertFiniteAmount(params.currentAmount, "Progress tabungan");
+  assertOptionalDate(params.deadline);
+}
+
 export const savingGoalsRepo = {
   async create(input: CreateSavingGoalInput) {
     const database = await getLumaDb();
     const timestamp = nowIso();
     const currentAmount = input.currentAmount ?? 0;
+    normalizeGoalPayload({
+      title: input.title,
+      targetAmount: input.targetAmount,
+      currentAmount,
+      deadline: input.deadline,
+    });
     const goal: SavingGoal = {
       id: nanoid(),
       title: input.title.trim(),
@@ -48,6 +85,12 @@ export const savingGoalsRepo = {
 
     const nextCurrentAmount = input.currentAmount ?? current.currentAmount;
     const nextTargetAmount = input.targetAmount ?? current.targetAmount;
+    normalizeGoalPayload({
+      title: input.title ?? current.title,
+      targetAmount: nextTargetAmount,
+      currentAmount: nextCurrentAmount,
+      deadline: input.deadline ?? current.deadline,
+    });
     const derivedStatus =
       current.status === "archived"
         ? "archived"
@@ -133,6 +176,9 @@ export const savingGoalsRepo = {
     if (!goal) {
       throw new Error("Target tabungan tidak ditemukan.");
     }
+
+    assertFiniteAmount(input.amount, "Nominal tabungan", false);
+    assertOptionalDate(input.date);
 
     const contribution: SavingGoalContribution = {
       id: nanoid(),

@@ -9,6 +9,7 @@ export const AI_INSIGHT_TYPES = [
 ] as const;
 
 export type AIInsightType = (typeof AI_INSIGHT_TYPES)[number];
+export type NightInsightSource = "transaction-datetime" | "transaction-time" | "none";
 
 export type AIInsightCardState =
   | "idle"
@@ -58,7 +59,7 @@ export interface AggregatedMonthlyInsightData {
     total: number;
     shareOfTransactions: number;
     shareOfSpending: number;
-    source: "createdAt";
+    source: NightInsightSource;
   };
   moods: Array<{
     mood: MoodType;

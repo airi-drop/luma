@@ -1,5 +1,6 @@
 import { Suspense, lazy, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { AIReflectionCard } from "../components/ai/AIReflectionCard";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -8,6 +9,7 @@ import { buildMonthlyReportData } from "../features/reports/reporting";
 import { formatCurrency } from "../lib/currency";
 import { formatDateLabel } from "../lib/date";
 import { useBudgetsStore } from "../stores/budgets.store";
+import { useSettingsStore } from "../stores/settings.store";
 import { useSavingGoalsStore } from "../stores/saving-goals.store";
 import { useTransactionsStore } from "../stores/transactions.store";
 import { useUiStore } from "../stores/ui.store";
@@ -43,6 +45,7 @@ export function ReportsPage() {
   const monthlyBudget = useBudgetsStore((state) => state.monthlyBudget);
   const categoryBudgets = useBudgetsStore((state) => state.categoryBudgets);
   const savingGoals = useSavingGoalsStore((state) => state.goals);
+  const settings = useSettingsStore((state) => state.settings);
   const isLoadingTransactions = useTransactionsStore((state) => state.isLoading);
   const isLoadingBudgets = useBudgetsStore((state) => state.isLoading);
   const isLoadingGoals = useSavingGoalsStore((state) => state.isLoading);
@@ -155,6 +158,15 @@ export function ReportsPage() {
         </div>
       </Card>
 
+      {!isLoading && !reportError ? (
+        <AIReflectionCard
+          activeCharacterId={settings?.activeCharacterId}
+          aiEnabled={settings?.aiEnabled ?? false}
+          month={selectedMonth}
+          transactions={monthTransactions}
+        />
+      ) : null}
+
       {isLoading ? (
         <Card title="Menyiapkan laporan">
           <p className="text-[12px] leading-5 text-[var(--text-secondary)]">
@@ -169,19 +181,19 @@ export function ReportsPage() {
         <>
           <section className="grid grid-cols-2 gap-2">
             <Card className="bg-[linear-gradient(155deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.16))]">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 Total spending
               </p>
               <p className="mt-1.5 truncate font-display text-[20px] leading-tight font-bold text-[var(--text-primary)]">
                 {formatCurrency(reportData.totalSpending)}
               </p>
-              <p className="mt-1 text-[11px] leading-4 text-[var(--text-secondary)]">
+              <p className="mt-1 text-[12px] leading-5 text-[var(--text-secondary)]">
                 Pengeluaran di {reportData.monthLabel.toLowerCase()}.
               </p>
             </Card>
 
             <Card className="bg-[linear-gradient(155deg,rgba(var(--overlay-glow-secondary),0.18),rgba(var(--overlay-glow-primary),0.12))]">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 Remaining
               </p>
               <p className="mt-1.5 truncate font-display text-[20px] leading-tight font-bold text-[var(--text-primary)]">
@@ -189,7 +201,7 @@ export function ReportsPage() {
                   ? "Belum diatur"
                   : formatCurrency(reportData.remainingBudget)}
               </p>
-              <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-[var(--text-secondary)]">
+              <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-[var(--text-secondary)]">
                 {reportData.totalBudget === null
                   ? "Budget bulan ini belum dipasang."
                   : `Dari ${formatCurrency(reportData.totalBudget)} yang kamu set.`}
@@ -197,13 +209,13 @@ export function ReportsPage() {
             </Card>
 
             <Card>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 Top category
               </p>
               <p className="mt-1.5 truncate text-[15px] font-bold text-[var(--text-primary)]">
                 {reportData.topCategory?.category ?? "Belum ada"}
               </p>
-              <p className="mt-1 text-[11px] leading-4 text-[var(--text-secondary)]">
+              <p className="mt-1 text-[12px] leading-5 text-[var(--text-secondary)]">
                 {reportData.topCategory
                   ? formatCurrency(reportData.topCategory.total)
                   : "Muncul setelah ada transaksi."}
@@ -211,13 +223,13 @@ export function ReportsPage() {
             </Card>
 
             <Card>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 Biggest tx
               </p>
               <p className="mt-1.5 truncate text-[15px] font-bold text-[var(--text-primary)]">
                 {reportData.biggestTransaction?.detail ?? "Belum ada"}
               </p>
-              <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-[var(--text-secondary)]">
+              <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-[var(--text-secondary)]">
                 {reportData.biggestTransaction
                   ? `${formatCurrency(reportData.biggestTransaction.nominal)} · ${formatDateLabel(reportData.biggestTransaction.date)}`
                   : "Otomatis kebaca di sini."}

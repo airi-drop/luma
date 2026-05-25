@@ -153,19 +153,32 @@ interface ResolvedConfig {
   model: string;
 }
 
-function resolveConfig(): ResolvedConfig {
+export function getAiRefinementAvailability() {
   const provider = resolveProvider();
   const config = PROVIDERS[provider];
   const env = getEnv();
-  const apiKey =
-    config.envApiKey?.trim() ||
-    env.universalKey.trim();
+  const apiKey = config.envApiKey?.trim() || env.universalKey.trim();
+  const model = env.model.trim() || config.defaultModel;
+
+  // TODO: Kalau AI refinement mau aktif di production, sambungkan ke proxy/backend.
+  // Client production sengaja tidak membawa API key langsung.
+  return {
+    available: Boolean(apiKey),
+    provider,
+    model,
+    productionRequiresProxy: import.meta.env.PROD,
+  };
+}
+
+function resolveConfig(): ResolvedConfig {
+  const { provider, model } = getAiRefinementAvailability();
+  const config = PROVIDERS[provider];
+  const env = getEnv();
+  const apiKey = config.envApiKey?.trim() || env.universalKey.trim();
 
   if (!apiKey) {
     throw new AIError("MISSING_API_KEY");
   }
-
-  const model = env.model.trim() || config.defaultModel;
 
   return { config, apiKey, model };
 }

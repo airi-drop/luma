@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   type PropsWithChildren,
   type ReactNode,
@@ -22,11 +23,18 @@ type PageWrapperProps = PropsWithChildren<{
 }>;
 
 function useBlobObjectUrl(blob?: Blob) {
-  // Buat URL hanya saat blob benar-benar berubah. JANGAN revoke saat unmount.
-  // Revoke berisiko menghapus URL yang masih dipakai DOM ketika user pindah
-  // halaman atau ganti tema (komponen mount-unmount). Browser akan
-  // membersihkan blob URL secara otomatis saat tab ditutup.
-  return useMemo(() => (blob ? URL.createObjectURL(blob) : null), [blob]);
+  const objectUrl = useMemo(() => (blob ? URL.createObjectURL(blob) : null), [blob]);
+
+  useEffect(
+    () => () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    },
+    [objectUrl],
+  );
+
+  return objectUrl;
 }
 
 export function PageWrapper({

@@ -1,5 +1,6 @@
 import { getLumaDb } from "../client";
 import { nowIso } from "../../lib/date";
+import { isValidCategoryType } from "../../lib/transaction-validation";
 import type {
   BudgetRecord,
   CategoryBudget,
@@ -15,6 +16,24 @@ function getCategoryBudgetId(month: string, category: CategoryType) {
   return `category:${month}:${category}`;
 }
 
+function assertValidMonth(month: string) {
+  if (!/^\d{4}-\d{2}$/.test(month)) {
+    throw new Error("Bulan budget belum valid.");
+  }
+
+  const [year, monthValue] = month.split("-").map(Number);
+
+  if (!year || !monthValue || monthValue < 1 || monthValue > 12) {
+    throw new Error("Bulan budget belum valid.");
+  }
+}
+
+function assertValidBudgetAmount(value: number, label: string) {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`${label} harus angka valid dan tidak boleh negatif.`);
+  }
+}
+
 export const budgetsRepo = {
   async getMonthlyBudget(month: string) {
     const database = await getLumaDb();
@@ -23,6 +42,9 @@ export const budgetsRepo = {
   },
 
   async upsertMonthlyBudget(month: string, totalBudget: number) {
+    assertValidMonth(month);
+    assertValidBudgetAmount(totalBudget, "Total budget");
+
     const database = await getLumaDb();
     const current = await this.getMonthlyBudget(month);
     const timestamp = nowIso();
@@ -59,6 +81,14 @@ export const budgetsRepo = {
     limit: number,
     resetMonthly = true,
   ) {
+    assertValidMonth(month);
+
+    if (!isValidCategoryType(category)) {
+      throw new Error("Kategori budget belum valid.");
+    }
+
+    assertValidBudgetAmount(limit, "Limit budget");
+
     const database = await getLumaDb();
     const id = getCategoryBudgetId(month, category);
     const current = await database.get("budgets", id);
