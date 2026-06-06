@@ -112,8 +112,8 @@ function NavItemLink({ item }: { item: NavItem }) {
           <span
             aria-hidden="true"
             className={[
-              "absolute -bottom-0.5 h-1 w-1 rounded-full transition-opacity duration-200",
-              isActive ? "bg-[var(--accent-primary)] opacity-100" : "opacity-0",
+              "absolute -bottom-0.5 rounded-full px-3 py-1 transition-opacity duration-200",
+              isActive ? "bg-[var(--accent-primary)]/20 opacity-100" : "opacity-0",
             ].join(" ")}
           />
         </>
@@ -198,7 +198,7 @@ export function BottomNav() {
 
         <button
           aria-label={fabConfig.ariaLabel}
-          className="absolute left-1/2 top-0 inline-flex h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[0_10px_20px_rgba(242,155,118,0.24),0_3px_8px_rgba(122,90,72,0.12)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
+          className="absolute left-1/2 top-0 inline-flex h-[50px] w-[50px] -translate-x-1/2 -translate-y-1/3 items-center justify-center rounded-full text-[var(--text-on-accent)] shadow-[0_10px_20px_rgba(242,155,118,0.24),0_3px_8px_rgba(122,90,72,0.12)] transition-transform duration-150 motion-reduce:transition-none motion-safe:active:scale-95"
           onClick={handleFabClick}
           style={{
             background:

@@ -36,7 +36,7 @@ function DataBootstrap() {
   }, [selectedMonth, loadBudgets, loadTransactions]);
 
   useEffect(() => {
-    syncBudgetUsage();
+    syncBudgetUsage(transactionItems);
   }, [syncBudgetUsage, transactionItems, selectedMonth]);
 
   useEffect(() => {

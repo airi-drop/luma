@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { formatCurrency, parseCurrencyInput } from "../../lib/currency";
+import { toCurrencyInput, GOAL_ICON_SUGGESTIONS } from "../../features/goals/goal-utils";
 import { formatDateLabel } from "../../lib/date";
 import { getSavingGoalProgress } from "../../lib/finance";
 import { useSavingGoalsStore } from "../../stores/saving-goals.store";
@@ -17,11 +18,7 @@ interface GoalDetailSheetProps {
   onSaved?: (message: string, tone?: "success" | "info" | "error") => void;
 }
 
-function toCurrencyInput(amount?: number) {
-  return amount ? formatCurrency(amount) : "";
-}
 
-const iconSuggestions = ["🎧", "✈️", "💻", "🎮", "🎀", "📚", "🏡", "📷"];
 
 export function GoalDetailSheet({
   goal,
@@ -456,7 +453,7 @@ function GoalDetailContent({
                 value={icon}
               />
               <div className="flex flex-wrap gap-1.5">
-                {iconSuggestions.map((suggestion) => (
+                {GOAL_ICON_SUGGESTIONS.map((suggestion) => (
                   <button
                     key={suggestion}
                     className={[

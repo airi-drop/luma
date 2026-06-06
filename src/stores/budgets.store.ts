@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { budgetsRepo } from "../db/repositories/budgets.repo";
 import { getCurrentMonth } from "../lib/date";
 import { getBudgetUsage, getCategoryBudgetUsage } from "../lib/finance";
+import type { CategoryBudget, CategoryType, MonthlyBudget, Transaction } from "../types";
 import { useTransactionsStore } from "./transactions.store";
-import type { CategoryBudget, CategoryType, MonthlyBudget } from "../types";
 
 interface BudgetWithUsage {
   budget: CategoryBudget;
@@ -18,7 +18,7 @@ interface BudgetsState {
   budgetUsage: ReturnType<typeof getBudgetUsage>;
   isLoading: boolean;
   error: string | null;
-  syncUsageWithTransactions: () => void;
+  syncUsageWithTransactions: (transactions: Transaction[]) => void;
   loadMonth: (month?: string) => Promise<void>;
   setMonth: (month: string) => Promise<void>;
   upsertMonthlyBudget: (totalBudget: number) => Promise<MonthlyBudget>;
@@ -34,10 +34,9 @@ function deriveBudgetState(
   monthlyBudget: MonthlyBudget | null,
   categoryBudgets: CategoryBudget[],
   month: string,
+  transactions: Transaction[],
 ) {
-  const monthTransactions = useTransactionsStore
-    .getState()
-    .items.filter((transaction) => transaction.month === month);
+  const monthTransactions = transactions.filter((transaction) => transaction.month === month);
 
   return {
     budgetUsage: getBudgetUsage(monthlyBudget, monthTransactions),
@@ -56,10 +55,10 @@ export const useBudgetsStore = create<BudgetsState>((set, get) => ({
   budgetUsage: null,
   isLoading: false,
   error: null,
-  syncUsageWithTransactions() {
+  syncUsageWithTransactions(transactions) {
     const { monthlyBudget, categoryBudgets, month } = get();
     set({
-      ...deriveBudgetState(monthlyBudget, categoryBudgets, month),
+      ...deriveBudgetState(monthlyBudget, categoryBudgets, month, transactions),
     });
   },
   async loadMonth(month = get().month) {
@@ -70,12 +69,18 @@ export const useBudgetsStore = create<BudgetsState>((set, get) => ({
         budgetsRepo.getMonthlyBudget(month),
         budgetsRepo.listCategoryBudgets(month),
       ]);
+      const transactionsState = useTransactionsStore.getState();
+      const transactions =
+        transactionsState.month === month
+          ? transactionsState.items
+          : transactionsState.allItems;
+
       set({
         month,
         monthlyBudget,
         categoryBudgets,
         isLoading: false,
-        ...deriveBudgetState(monthlyBudget, categoryBudgets, month),
+        ...deriveBudgetState(monthlyBudget, categoryBudgets, month, transactions),
       });
     } catch (error) {
       set({

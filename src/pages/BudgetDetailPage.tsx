@@ -123,7 +123,7 @@ export function BudgetDetailPage() {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 space-y-1">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-                  Total budget
+                  Total anggaran
                 </p>
                 <p className="truncate font-display text-[24px] leading-tight font-bold text-[var(--text-primary)]">
                   {formatCurrency(monthlyBudget.totalBudget)}
@@ -135,7 +135,7 @@ export function BudgetDetailPage() {
                 </p>
               </div>
               <button
-                className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3 text-[12px] font-semibold text-[var(--text-primary)]"
+                className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card-soft)] px-3 text-[12px] font-semibold text-[var(--text-primary)]"
                 onClick={openMonthlySheet}
                 type="button"
               >

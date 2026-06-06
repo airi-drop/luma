@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { formatCurrency, parseCurrencyInput } from "../../lib/currency";
+import { toCurrencyInput, GOAL_ICON_SUGGESTIONS } from "../../features/goals/goal-utils";
 import { BottomSheet } from "../ui/BottomSheet";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
@@ -13,11 +14,7 @@ interface CreateGoalSheetProps {
   onSubmit: (input: CreateSavingGoalInput) => Promise<void>;
 }
 
-const iconSuggestions = ["🎧", "✈️", "💻", "🎮", "🎀", "📚", "🏡", "📷"];
 
-function toCurrencyInput(amount?: number) {
-  return amount ? formatCurrency(amount) : "";
-}
 
 export function CreateGoalSheet({
   isOpen,
@@ -168,7 +165,7 @@ function GoalForm({ isSubmitting, onSubmit }: GoalFormProps) {
           value={icon}
         />
         <div className="flex flex-wrap gap-1.5">
-          {iconSuggestions.map((suggestion) => (
+          {GOAL_ICON_SUGGESTIONS.map((suggestion) => (
             <button
               key={suggestion}
               className={[

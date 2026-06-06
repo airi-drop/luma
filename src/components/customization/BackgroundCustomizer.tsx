@@ -283,7 +283,7 @@ function BackgroundItem({
             type="button"
             onClick={() => void onSelect(background.id)}
             className={[
-              "min-h-7 rounded-full px-2.5 text-[11px] font-semibold transition-colors",
+              "min-h-[44px] rounded-full px-2.5 text-[11px] font-semibold transition-colors",
               active
                 ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                 : "border border-[var(--border-soft)] bg-[var(--bg-card)] text-[var(--text-primary)]",
@@ -294,7 +294,7 @@ function BackgroundItem({
           <button
             type="button"
             onClick={() => void onRemove(background.id)}
-            className="min-h-7 rounded-full px-2 text-[11px] font-semibold text-[var(--danger-soft)] hover:underline"
+            className="min-h-[44px] rounded-full px-2 text-[11px] font-semibold text-[var(--danger-soft)] hover:underline"
           >
             Hapus
           </button>

@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { MonthlyReportData } from "../../features/reports/reporting";
 import { formatCurrency } from "../../lib/currency";
 import { Card } from "../ui/Card";
@@ -38,6 +38,20 @@ interface TooltipPayloadItem {
   payload?: {
     label?: string;
   };
+}
+
+/** Read the current accent-primary CSS variable as a hex color string. */
+function getAccentColor(): string {
+  if (typeof document === "undefined") return "#F29B76";
+  const styles = getComputedStyle(document.documentElement);
+  return styles.getPropertyValue("--accent-primary").trim() || "#F29B76";
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 function ChartTooltip({
@@ -125,6 +139,10 @@ const chartTabs: ReportChartTabMeta[] = [
 export function ReportChartsSection({ reportData }: ReportChartsSectionProps) {
   const [activeTab, setActiveTab] = useState<ReportChartTab>("category");
   const activeTabMeta = chartTabs.find((tab) => tab.id === activeTab) ?? chartTabs[0];
+  const accentColor = useMemo(() => getAccentColor(), [activeTab]);
+  const accentRgba028 = useMemo(() => hexToRgba(accentColor, 0.28), [accentColor]);
+  const accentRgba068 = useMemo(() => hexToRgba(accentColor, 0.68), [accentColor]);
+  const accentRgba008 = useMemo(() => hexToRgba(accentColor, 0.08), [accentColor]);
 
   return (
     <Card className="px-4 py-4" title="Panel laporan" subtitle={activeTabMeta.subtitle}>
@@ -217,8 +235,8 @@ export function ReportChartsSection({ reportData }: ReportChartsSectionProps) {
                   <AreaChart data={reportData.spendingTrend}>
                     <defs>
                       <linearGradient id="trendFill" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="4%" stopColor="#F29B76" stopOpacity={0.68} />
-                        <stop offset="96%" stopColor="#F29B76" stopOpacity={0.08} />
+                        <stop offset="4%" stopColor={accentColor} stopOpacity={0.68} />
+                        <stop offset="96%" stopColor={accentColor} stopOpacity={0.08} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="rgba(122,90,72,0.22)" strokeDasharray="3 3" />
@@ -239,21 +257,21 @@ export function ReportChartsSection({ reportData }: ReportChartsSectionProps) {
                     <Tooltip
                       content={<ChartTooltip labelPrefix="Tanggal" />}
                       cursor={{
-                        stroke: "rgba(242,155,118,0.28)",
+                        stroke: accentRgba028,
                         strokeWidth: 1.5,
                         strokeDasharray: "4 4",
                       }}
                     />
                     <Area
                       activeDot={{
-                        fill: "#F29B76",
+                        fill: accentColor,
                         r: 4,
                         stroke: "rgba(255,245,236,0.85)",
                         strokeWidth: 2,
                       }}
                       dataKey="total"
                       fill="url(#trendFill)"
-                      stroke="#F29B76"
+                      stroke={accentColor}
                       strokeWidth={3.2}
                       type="monotone"
                     />

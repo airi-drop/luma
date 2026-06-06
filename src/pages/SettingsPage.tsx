@@ -313,7 +313,7 @@ function BackLink() {
   return (
     <Link
       to="/home"
-      className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
+      className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--border-soft)] bg-[var(--bg-card)] px-3 text-[12px] font-semibold text-[var(--text-secondary)]"
     >
       Kembali
     </Link>

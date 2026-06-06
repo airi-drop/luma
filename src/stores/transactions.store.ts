@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { sortTransactions } from "../lib/sort-transactions";
 import { getCurrentMonth } from "../lib/date";
 import {
   getCategoryTotals,
@@ -97,10 +98,7 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
     const created = await transactionsRepo.create(input);
 
     if (created.month === get().month) {
-      const items = [created, ...get().items].sort((left, right) =>
-        right.date.localeCompare(left.date) ||
-        right.createdAt.localeCompare(left.createdAt),
-      );
+      const items = sortTransactions([created, ...get().items]);
       set({
         items,
         ...derive(items),
@@ -108,10 +106,7 @@ export const useTransactionsStore = create<TransactionsState>((set, get) => ({
     }
 
     if (get().hasLoadedAll) {
-      const allItems = [created, ...get().allItems].sort((left, right) =>
-        right.date.localeCompare(left.date) ||
-        right.createdAt.localeCompare(left.createdAt),
-      );
+      const allItems = sortTransactions([created, ...get().allItems]);
       set({ allItems });
     }
 

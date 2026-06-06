@@ -128,7 +128,7 @@ export function ReportsPage() {
 
           <div className="flex flex-wrap items-center gap-2">
             <Button
-              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              className="min-h-[44px] gap-2 px-3.5 text-[12px]"
               disabled={!hasReportContent || isExportingPdf}
               onClick={handleExportPdf}
               variant="secondary"
@@ -137,7 +137,7 @@ export function ReportsPage() {
               {isExportingPdf ? "PDF..." : "PDF"}
             </Button>
             <Button
-              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              className="min-h-[44px] gap-2 px-3.5 text-[12px]"
               disabled={!hasReportContent || isExportingXlsx}
               onClick={handleExportXlsx}
               variant="secondary"
@@ -146,7 +146,7 @@ export function ReportsPage() {
               {isExportingXlsx ? "XLSX..." : "XLSX"}
             </Button>
             <Button
-              className="min-h-[40px] gap-2 px-3.5 text-[12px]"
+              className="min-h-[44px] gap-2 px-3.5 text-[12px]"
               disabled={!hasReportContent || isExportingCsv}
               onClick={handleExportCsv}
               variant="secondary"
@@ -182,7 +182,7 @@ export function ReportsPage() {
           <section className="grid grid-cols-2 gap-2">
             <Card className="bg-[linear-gradient(155deg,rgba(var(--overlay-glow-primary),0.22),rgba(var(--overlay-glow-secondary),0.16))]">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Total spending
+                Total pengeluaran
               </p>
               <p className="mt-1.5 truncate font-display text-[20px] leading-tight font-bold text-[var(--text-primary)]">
                 {formatCurrency(reportData.totalSpending)}
@@ -194,7 +194,7 @@ export function ReportsPage() {
 
             <Card className="bg-[linear-gradient(155deg,rgba(var(--overlay-glow-secondary),0.18),rgba(var(--overlay-glow-primary),0.12))]">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Remaining
+                Sisa
               </p>
               <p className="mt-1.5 truncate font-display text-[20px] leading-tight font-bold text-[var(--text-primary)]">
                 {reportData.remainingBudget === null
@@ -210,7 +210,7 @@ export function ReportsPage() {
 
             <Card>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Top category
+                Kategori teratas
               </p>
               <p className="mt-1.5 truncate text-[15px] font-bold text-[var(--text-primary)]">
                 {reportData.topCategory?.category ?? "Belum ada"}
@@ -224,7 +224,7 @@ export function ReportsPage() {
 
             <Card>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Biggest tx
+                Transaksi terbesar
               </p>
               <p className="mt-1.5 truncate text-[15px] font-bold text-[var(--text-primary)]">
                 {reportData.biggestTransaction?.detail ?? "Belum ada"}

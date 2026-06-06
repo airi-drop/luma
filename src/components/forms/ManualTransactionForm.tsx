@@ -183,16 +183,21 @@ export function ManualTransactionForm({
     }
 
     setErrors({});
-    await onSubmit({
-      nominal: result.nominal,
-      detail: values.detail.trim(),
-      category: values.category as CategoryType,
-      account: values.account as AccountType,
-      date: values.date,
-      mood: values.mood ? (values.mood as MoodType) : undefined,
-      note: values.note.trim() || undefined,
-    });
-    setValues(getFormValues(providedInitialValues));
+
+    try {
+      await onSubmit({
+        nominal: result.nominal,
+        detail: values.detail.trim(),
+        category: values.category as CategoryType,
+        account: values.account as AccountType,
+        date: values.date,
+        mood: values.mood ? (values.mood as MoodType) : undefined,
+        note: values.note.trim() || undefined,
+      });
+      setValues(getFormValues(providedInitialValues));
+    } catch {
+      return;
+    }
   }
 
   return (

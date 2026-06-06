@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useLayoutEffect, useRef } from "react";
 import type { PropsWithChildren, ReactNode } from "react";
 
 type BottomSheetProps = PropsWithChildren<{
@@ -70,6 +70,15 @@ export function BottomSheet({
   const descriptionId = useId();
   const sheetRef = useRef<HTMLElement | null>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  // Safety net: restore body overflow whenever sheet closes
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = "";
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -99,7 +108,7 @@ export function BottomSheet({
       }
 
       if (event.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -153,7 +162,7 @@ export function BottomSheet({
         previousElement.focus();
       }
     };
-  }, [isOpen, onClose, sheetId]);
+  }, [isOpen, sheetId]);
 
   if (!isOpen) {
     return null;

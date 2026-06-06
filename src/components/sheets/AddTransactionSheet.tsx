@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useCallback, useState } from "react";
 import type { ParseResult } from "../../features/ai/types";
 import { useBudgetsStore } from "../../stores/budgets.store";
 import { useSettingsStore } from "../../stores/settings.store";
@@ -63,17 +63,21 @@ export function AddTransactionSheet() {
     }
   }
 
-  function handleCloseSheet() {
+  const handleCloseSheet = useCallback(() => {
     closeBottomSheet();
     setActiveTab("manual");
     setPreviewState(null);
-  }
+  }, [closeBottomSheet]);
 
-  function handlePreviewSaved() {
+  const handleClosePreview = useCallback(() => {
+    setPreviewState(null);
+  }, []);
+
+  const handlePreviewSaved = useCallback(() => {
     setPreviewState(null);
     setActiveTab("ai");
     closeBottomSheet();
-  }
+  }, [closeBottomSheet]);
 
   return (
     <>
@@ -133,7 +137,7 @@ export function AddTransactionSheet() {
       <Suspense fallback={null}>
         <AIParsePreviewSheet
           isOpen={previewState !== null}
-          onClose={() => setPreviewState(null)}
+          onClose={handleClosePreview}
           onSaved={handlePreviewSaved}
           originalText={previewState?.originalText ?? ""}
           result={previewState?.result ?? null}

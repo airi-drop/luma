@@ -2,6 +2,7 @@
   "name": "luma",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "Cozy customizable finance space",
   "scripts": {
@@ -11,9 +12,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "date-fns": "^4.2.1",
-    "framer-motion": "^12.39.0",
-    "html2canvas": "^1.4.1",
     "idb": "^8.0.3",
     "jspdf": "^4.2.1",
     "nanoid": "^5.1.11",

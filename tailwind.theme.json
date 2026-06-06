@@ -1,0 +1,115 @@
+{
+  "theme": {
+    "extend": {
+      "colors": {
+        "primary": "#e8a857",
+        "primary-soft": "#f4d6a0",
+        "secondary": "#8fb896",
+        "danger": "#d96c5f",
+        "canvas": "#1a1410",
+        "canvas-card": "#2a211b",
+        "canvas-card-soft": "#342a22",
+        "on-canvas": "#fff3dc",
+        "on-canvas-secondary": "#cdbea8",
+        "on-canvas-muted": "#9c8d7b",
+        "hairline": "#3d3229"
+      },
+      "fontFamily": {
+        "hero-number": [
+          "'Fraunces', Georgia, serif"
+        ],
+        "page-title": [
+          "'Fraunces', Georgia, serif"
+        ],
+        "section-title": [
+          "'DM Sans', system-ui, sans-serif"
+        ],
+        "card-title": [
+          "'DM Sans', system-ui, sans-serif"
+        ],
+        "body-md": [
+          "'DM Sans', system-ui, sans-serif"
+        ],
+        "body-sm": [
+          "'DM Sans', system-ui, sans-serif"
+        ],
+        "caption": [
+          "'DM Sans', system-ui, sans-serif"
+        ],
+        "micro-label": [
+          "'DM Sans', system-ui, sans-serif"
+        ]
+      },
+      "fontSize": {
+        "hero-number": [
+          "44px",
+          {
+            "letterSpacing": "-0.02em",
+            "fontWeight": "700"
+          }
+        ],
+        "page-title": [
+          "28px",
+          {
+            "letterSpacing": "-0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "section-title": [
+          "20px",
+          {
+            "fontWeight": "700"
+          }
+        ],
+        "card-title": [
+          "16px",
+          {
+            "fontWeight": "700"
+          }
+        ],
+        "body-md": [
+          "15px",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "14px",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "caption": [
+          "12px",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "micro-label": [
+          "11px",
+          {
+            "letterSpacing": "0.04em",
+            "fontWeight": "600"
+          }
+        ]
+      },
+      "borderRadius": {
+        "sm": "12px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "full": "999px"
+      },
+      "spacing": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "12px",
+        "default": "16px",
+        "card": "20px",
+        "section": "24px",
+        "large": "32px",
+        "hero": "40px"
+      }
+    }
+  }
+}

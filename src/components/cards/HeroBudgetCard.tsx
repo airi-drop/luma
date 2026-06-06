@@ -24,7 +24,7 @@ function ProgressBar({ value }: { value: number }) {
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-0.5 rounded-[10px] border border-[var(--hero-glass-border)] bg-[var(--hero-glass)] px-2 py-1.5 backdrop-blur-sm">
-      <p className="truncate text-[8px] font-semibold uppercase tracking-[0.12em] text-[var(--hero-text-soft)]">
+      <p className="truncate text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--hero-text-soft)]">
         {label}
       </p>
       <p className="truncate text-[12px] font-bold text-[var(--hero-text)]">
@@ -60,10 +60,10 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
         {/* header */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1 space-y-0.5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--hero-text-soft)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--hero-text-soft)]">
               Budget bulan ini
             </p>
-            <h2 className="truncate font-display text-[22px] leading-tight font-bold">
+            <h2 className="truncate font-display text-2xl leading-tight font-bold">
               {budgetUsage ? formatCurrency(budgetUsage.remaining) : "Belum diatur"}
             </h2>
             <p className="line-clamp-2 max-w-[26ch] text-[11px] leading-4 text-[var(--hero-text-soft)]">
@@ -79,7 +79,7 @@ export function HeroBudgetCard({ budgetUsage, softWarning }: HeroBudgetCardProps
               background: "var(--hero-glass-strong)",
             }}
           >
-            <p className="text-[7px] font-semibold uppercase tracking-[0.16em] text-[var(--hero-text-soft)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--hero-text-soft)]">
               Progress
             </p>
             <p className="font-display text-[12px] font-bold leading-tight text-[var(--hero-text)]">

@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { getLumaDb } from "../client";
 import { getMonthFromDate, nowIso } from "../../lib/date";
+import { sortTransactions } from "../../lib/sort-transactions";
 import {
   isValidAccountType,
   isValidCategoryType,
@@ -13,12 +14,7 @@ import type {
   UpdateTransactionInput,
 } from "../../types";
 
-function sortTransactions(transactions: Transaction[]) {
-  return [...transactions].sort((left, right) =>
-    right.date.localeCompare(left.date) ||
-    right.createdAt.localeCompare(left.createdAt),
-  );
-}
+
 
 function assertValidTransaction(input: CreateTransactionInput) {
   if (!input.detail.trim()) {
